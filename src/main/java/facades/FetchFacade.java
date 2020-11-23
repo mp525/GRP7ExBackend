@@ -49,5 +49,14 @@ public class FetchFacade {
        
         return retList;
     }
+    
+    public List<String> fetchReviewByTitle() throws InterruptedException, ExecutionException, IOException {
+        String url = "https://api.nytimes.com/svc/movies/v2/reviews/search.json?api-key=5tN35qLGRRkvgYSCFj7wKdwhDNb5PMOF&query=harry potter";
+        List<String> x = new ArrayList();
+        String fetch = HttpUtils.fetchData(url);
+        //Gson.fromjson fra string til objekt
+        x.add(fetch);
+        return x;
+    }
 
 }
