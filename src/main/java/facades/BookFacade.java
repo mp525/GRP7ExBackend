@@ -31,7 +31,7 @@ public class BookFacade {
         }
     }
     
-    public List<BookDTO> fetchBooks(String title) throws IOException{
+    public List<BookDTO> fetchBookReviews(String title) throws IOException{
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         List<BookDTO> books = new ArrayList();
         String url = "https://api.nytimes.com/svc/books/v3/reviews.json?api-key=5tN35qLGRRkvgYSCFj7wKdwhDNb5PMOF" + "&title=" + title;
@@ -67,7 +67,7 @@ public class BookFacade {
     public static void main(String[] args) throws IOException {
         BookFacade facade = new BookFacade();
         
-        System.out.println(facade.fetchBooks("1Q84"));
+        System.out.println(facade.fetchBookReviews("1Q84"));
     }
 
 }
