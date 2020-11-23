@@ -2,6 +2,8 @@ package facades;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dto.FilmDTO;
+import dto.RawFilmDTO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,13 +52,22 @@ public class FetchFacade {
         return retList;
     }
     
-    public List<String> fetchReviewByTitle() throws InterruptedException, ExecutionException, IOException {
-        String url = "https://api.nytimes.com/svc/movies/v2/reviews/search.json?api-key=5tN35qLGRRkvgYSCFj7wKdwhDNb5PMOF&query=harry potter";
-        List<String> x = new ArrayList();
+    public List<FilmDTO> fetchReviewByTitle(String title) throws IOException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        List<FilmDTO> films = new ArrayList();
+        String url = "https://api.nytimes.com/svc/movies/v2/reviews/search.json?api-key=5tN35qLGRRkvgYSCFj7wKdwhDNb5PMOF" + "&query=" + title;
         String fetch = HttpUtils.fetchData(url);
-        //Gson.fromjson fra string til objekt
-        x.add(fetch);
-        return x;
+        RawFilmDTO film = gson.fromJson(fetch, RawFilmDTO.class);
+        for(FilmDTO f : film.getResults()) {
+            films.add(f);
+        }
+        return films;
+    }
+    
+    public static void main(String[] args) throws IOException {
+        FetchFacade facade = new FetchFacade();
+        System.out.println(facade.fetchReviewByTitle("harry potter"));
+        System.out.println(facade.fetchReviewByTitle("lebowski"));
     }
 
 }
