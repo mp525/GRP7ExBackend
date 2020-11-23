@@ -2,6 +2,7 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dto.FilmDTO;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import javax.ws.rs.core.Context;
@@ -14,19 +15,23 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.core.MediaType;
 import facades.FetchFacade;
 import java.util.List;
+import javax.ws.rs.PathParam;
  
 /**
  * REST Web Service
  *
  * @author lam
  */
-@Path("default")
-public class DefaultResource {
+@Path("film")
+public class FilmResource {
     private final FetchFacade facade = new FetchFacade();
     private final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @Context
     private UriInfo context;
+    
+    public FilmResource() {
+    }
 
    
     @GET
@@ -35,6 +40,13 @@ public class DefaultResource {
         List<String> list = facade.fetchParallel();
         return GSON.toJson(list);
     }
-
+    
+    @GET
+    @Path("review/{title}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getFilmReview(@PathParam("title") String title) throws IOException {
+        List<FilmDTO> list = facade.fetchReviewByTitle(title);
+        return GSON.toJson(list);
+    }
    
 }

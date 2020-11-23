@@ -9,14 +9,12 @@ public class FilmDTO {
     private String headline;
     private String summary_short;
     private String publication_date;
-    private String date_updated;
 
-    public FilmDTO(String display_title, String headline, String summary_short, String publication_date, String date_updated) {
+    public FilmDTO(String display_title, String headline, String summary_short, String publication_date) {
         this.display_title = display_title;
         this.headline = headline;
         this.summary_short = summary_short;
         this.publication_date = publication_date;
-        this.date_updated = date_updated;
     }
 
     public String getHeadline() {
@@ -51,17 +49,9 @@ public class FilmDTO {
         this.publication_date = publication_date;
     }
 
-    public String getDate_updated() {
-        return date_updated;
-    }
-
-    public void setDate_updated(String date_updated) {
-        this.date_updated = date_updated;
-    }
-
     @Override
     public String toString() {
-        return "FilmDTO{" + "display_title=" + display_title + ", headline=" + headline + ", summary_short=" + summary_short + ", publication_date=" + publication_date + ", date_updated=" + date_updated + '}';
+        return "FilmDTO{" + "display_title=" + display_title + ", headline=" + headline + ", summary_short=" + summary_short + ", publication_date=" + publication_date + '}';
     }
     
 }
