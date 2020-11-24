@@ -1,5 +1,7 @@
 package rest;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import entities.RenameMe;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
@@ -102,4 +104,14 @@ public class RenameMeResourceTest {
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("count", equalTo(2));
     }
+    
+//    @Test
+//    public void testGetFilmReview() throws Exception {
+//        given()
+//                .contentType("application/json")
+//                .get("/film/review/lebowski").then()
+//                .assertThat()
+//                .statusCode(HttpStatus.OK_200.getStatusCode())
+//                .body("headline", equalTo("Big Lebowski, the (Movie)"));
+//    }
 }
