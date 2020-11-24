@@ -2,12 +2,14 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dto.FilmDTO;
 import entities.RenameMe;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
 import io.restassured.parsing.Parser;
 import java.net.URI;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
@@ -15,6 +17,9 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -105,13 +110,32 @@ public class RenameMeResourceTest {
                 .body("count", equalTo(2));
     }
     
-//    @Test
-//    public void testGetFilmReview() throws Exception {
-//        given()
-//                .contentType("application/json")
-//                .get("/film/review/lebowski").then()
-//                .assertThat()
-//                .statusCode(HttpStatus.OK_200.getStatusCode())
-//                .body("headline", equalTo("Big Lebowski, the (Movie)"));
-//    }
+    @Test
+    public void testGetFilmReview() throws Exception {
+        String[] arr = {"Big Lebowski, the (Movie)"};
+        given()
+                .contentType("application/json")
+                .get("/film/review/lebowski").then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("headline", contains(arr));
+    }
+    
+    @Test
+    public void testGetFilmReviews() throws Exception {
+        List<FilmDTO> list;
+        list = given()
+                .contentType("application/json")
+                .when()
+                .get("/film/review/harry%20potter").then()
+                .extract().body().jsonPath().getList("", FilmDTO.class);
+        FilmDTO f1 = list.get(0);
+        FilmDTO f2 = list.get(1);
+        FilmDTO f3 = list.get(2);
+        FilmDTO f4 = list.get(3);
+        FilmDTO f5 = list.get(4);
+        FilmDTO f6 = list.get(5);
+        FilmDTO f7 = list.get(6);
+        assertThat(list, contains(f1, f2, f3,f4,f5,f6,f7));
+    }
 }
