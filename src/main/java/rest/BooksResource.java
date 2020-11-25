@@ -8,9 +8,12 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.BookDTO;
+import dto.ReviewsDTO;
 import facades.BookFacade;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
@@ -20,6 +23,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.SecurityContext;
 
 /**
  * REST Web Service
@@ -34,6 +38,8 @@ public class BooksResource {
     @Context
     private UriInfo context;
 
+    @Context
+    SecurityContext securityContext;
     /**
      * Creates a new instance of BooksResource
      */
@@ -51,14 +57,24 @@ public class BooksResource {
         throw new UnsupportedOperationException();
     }
     
-    @Path("reviews/{title}")
+    @Path("reviewsOld/{title}")
     @GET
+    @RolesAllowed("user")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getJson(@PathParam("title") String title) throws IOException {
-        List<BookDTO> list = facade.fetchBookReviews(title);
+    public String getReviewsOld(@PathParam("title") String title) throws IOException {
+        List<BookDTO> list = facade.fetchBookReviewsOld(title);
         return GSON.toJson(list);
     }
 
+    @Path("reviews/{title}")
+    @GET
+    @RolesAllowed("user")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getReviews(@PathParam("title") String title) throws IOException, InterruptedException, ExecutionException {
+        ReviewsDTO dto = facade.fetchBookReviews(title);
+        return GSON.toJson(dto);
+    }
+    
     /**
      * PUT method for updating or creating an instance of BooksResource
      * @param content representation for the resource
