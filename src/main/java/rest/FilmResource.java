@@ -15,6 +15,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.core.MediaType;
 import facades.FetchFacade;
 import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.PathParam;
  
 /**
@@ -44,6 +45,7 @@ public class FilmResource {
     @GET
     @Path("review/{title}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("user")
     public String getFilmReview(@PathParam("title") String title) throws IOException {
         List<FilmDTO> list = facade.fetchReviewByTitle(title);
         return GSON.toJson(list);
