@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.FilmDTO;
 import entities.RenameMe;
+import entities.Role;
+import entities.User;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
@@ -71,6 +73,32 @@ public class RenameMeResourceTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            //Delete existing users and roles to get a "fresh" database
+            em.createQuery("delete from User").executeUpdate();
+            em.createQuery("delete from Role").executeUpdate();
+
+            Role userRole = new Role("user");
+            Role adminRole = new Role("admin");
+            User user = new User("user", "test");
+            user.addRole(userRole);
+            User admin = new User("admin", "test");
+            admin.addRole(adminRole);
+            User both = new User("user_admin", "test");
+            both.addRole(userRole);
+            both.addRole(adminRole);
+            em.persist(userRole);
+            em.persist(adminRole);
+            em.persist(user);
+            em.persist(admin);
+            em.persist(both);
+            //System.out.println("Saved test data to database");
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+        /*EntityManager em = emf.createEntityManager();
         r1 = new RenameMe("Some txt", "More text");
         r2 = new RenameMe("aaa", "bbb");
         try {
@@ -81,7 +109,23 @@ public class RenameMeResourceTest {
             em.getTransaction().commit();
         } finally {
             em.close();
-        }
+        }*/
+    }
+    
+    //This is how we hold on to the token after login, similar to that a client must store the token somewhere
+    private static String securityToken;
+    
+    //Utility method to login and set the returned securityToken
+    private static void login(String role, String password) {
+        String json = String.format("{username: \"%s\", password: \"%s\"}", role, password);
+        securityToken = given()
+                .contentType("application/json")
+                .body(json)
+                //.when().post("/api/login")
+                .when().post("/login")
+                .then()
+                .extract().path("token");
+        //System.out.println("TOKEN ---> " + securityToken);
     }
 
     @Test
@@ -99,22 +143,15 @@ public class RenameMeResourceTest {
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("msg", equalTo("Hello World"));
     }
-
-    @Test
-    public void testCount() throws Exception {
-        given()
-                .contentType("application/json")
-                .get("/xxx/count").then()
-                .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("count", equalTo(2));
-    }
     
     @Test
     public void testGetFilmReview() throws Exception {
+        login("user","test");
         String[] arr = {"Big Lebowski, the (Movie)"};
         given()
                 .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .when()
                 .get("/film/review/lebowski").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
@@ -123,9 +160,11 @@ public class RenameMeResourceTest {
     
     @Test
     public void testGetFilmReviews() throws Exception {
+        login("user","test");
         List<FilmDTO> list;
         list = given()
                 .contentType("application/json")
+                .header("x-access-token", securityToken)
                 .when()
                 .get("/film/review/harry%20potter").then()
                 .extract().body().jsonPath().getList("", FilmDTO.class);
