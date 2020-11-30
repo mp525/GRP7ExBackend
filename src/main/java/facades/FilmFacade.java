@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.FilmDTO;
 import dto.RawFilmDTO;
+import entities.FilmReview;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +13,22 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import utils.HttpUtils;
 
 public class FilmFacade {
-
+ private static EntityManagerFactory emf;
+    private static FilmFacade instance;
     public FilmFacade() {
     }
-    
+    public static FilmFacade getFilmFacade(EntityManagerFactory _emf) {
+        if (instance == null) {
+            emf = _emf;
+            instance = new FilmFacade();
+        }
+        return instance;
+    }
     
     class Default implements Callable<String> {
 
@@ -68,12 +77,25 @@ public class FilmFacade {
         return films;
     }
     
-    public void writeFilmRev(){
+    public FilmDTO writeFilmRev(FilmDTO fr){
         
-    }
+        FilmReview fr1 = new FilmReview(fr);
+        EntityManager em = emf.createEntityManager();
+        try{
+            em.getTransaction().begin();
+            em.persist(fr1);
+            em.getTransaction().commit();
+            return new FilmDTO(fr1);
+        }finally {
+            em.close();
+        }}
+
+    
     
     public static void main(String[] args) throws IOException {
+        
         FilmFacade facade = new FilmFacade();
+        FilmDTO fr = new FilmDTO("Harry Potter","OMG ITS GREAT"," it was so great holy shit idk what to say");
         System.out.println(facade.fetchReviewByTitle("harry potter"));
         System.out.println(facade.fetchReviewByTitle("lebowski"));
     }
