@@ -100,5 +100,10 @@ public class BookFacadeTest {
         ReviewsDTO dto = facade.fetchBookReviews(title);
         assertTrue(dto.getGoodreads().getReviews_widget().contains("Becoming"));
     }
-
+    
+     @Test
+    public void testAdd() throws Exception {
+    facade.writeBookRev(new BookDTO(new BookReview("","","","")));
+    
+    }
 }

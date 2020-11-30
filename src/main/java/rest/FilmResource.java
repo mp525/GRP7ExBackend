@@ -52,9 +52,12 @@ public class FilmResource {
         return GSON.toJson(list);
     }
    @POST
+   @RolesAllowed("user")
     @Path("add")
     @Produces(MediaType.APPLICATION_JSON)
     public FilmDTO addFilmReview(String filmReview) throws IOException {
+        
+        
         FilmDTO fr = GSON.fromJson(filmReview, FilmDTO.class);        
         facade.writeFilmRev(fr);
         return fr;

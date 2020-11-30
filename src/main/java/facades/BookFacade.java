@@ -189,7 +189,7 @@ public class BookFacade {
         }
         return books;
     }
-
+    
     public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
         BookFacade facade = new BookFacade();
         EntityManagerFactory emf2 = EMF_Creator.createEntityManagerFactory();
@@ -208,5 +208,17 @@ public class BookFacade {
         //System.out.println(facade.fetchBookReviews("1Q84").toString());
         //System.out.println(facade.getBookIsbn("Quilting For Dummies"));
     }
-
+public BookDTO writeBookRev(BookDTO fr){
+        BookReview b = new BookReview(fr);
+        
+        EntityManager em = emf.createEntityManager();
+        try{
+            em.getTransaction().begin();
+            System.out.println(b);
+            em.persist(b);
+            em.getTransaction().commit();
+            return new BookDTO(b);
+        }finally {
+            em.close();
+        }}
 }

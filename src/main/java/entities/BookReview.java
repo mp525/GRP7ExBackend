@@ -5,6 +5,7 @@
  */
 package entities;
 
+import dto.BookDTO;
 import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -42,7 +43,13 @@ public class BookReview {
         this.author = author;
         this.summary = summary;
     }
-
+public BookReview(BookDTO d) {
+        this.publication = new Date();
+        this.byline = d.getByline();
+        this.title = d.getBook_title();
+        this.author = d.getBook_author();
+        this.summary = d.getSummary();
+    }
     public Date getPublication() {
         return publication;
     }
