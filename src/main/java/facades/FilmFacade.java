@@ -16,10 +16,17 @@ import javax.persistence.EntityManagerFactory;
 import utils.HttpUtils;
 
 public class FilmFacade {
-
+ private static EntityManagerFactory emf;
+    private static FilmFacade instance;
     public FilmFacade() {
     }
-    
+    public static FilmFacade getFilmFacade(EntityManagerFactory _emf) {
+        if (instance == null) {
+            emf = _emf;
+            instance = new FilmFacade();
+        }
+        return instance;
+    }
     
     class Default implements Callable<String> {
 
