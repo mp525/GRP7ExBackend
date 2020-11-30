@@ -1,16 +1,19 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery; 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 @Entity
-@NamedQuery(name = "FilmReview.deleteAllRows", query = "DELETE from RenameMe")
+@NamedQuery(name = "FilmReview.deleteAllRows", query = "DELETE from FilmReview")
 public class FilmReview implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -20,7 +23,8 @@ public class FilmReview implements Serializable {
     private String display_title;
     private String headline;
     private String summary_short;
-    private String publication_date;
+    @Temporal(TemporalType.DATE)
+    private Date publication_date;
     
     public FilmReview() {
     }
@@ -38,7 +42,7 @@ public class FilmReview implements Serializable {
         this.display_title = display_title;
         this.headline = headline;
         this.summary_short = summary_short;
-        this.publication_date = publication_date;
+        this.publication_date = new Date();
     }
 
     public String getDisplay_title() {
@@ -65,11 +69,11 @@ public class FilmReview implements Serializable {
         this.summary_short = summary_short;
     }
 
-    public String getPublication_date() {
+    public Date getPublication_date() {
         return publication_date;
     }
 
-    public void setPublication_date(String publication_date) {
+    public void setPublication_date(Date publication_date) {
         this.publication_date = publication_date;
     }
 

@@ -5,14 +5,28 @@
  */
 package entities;
 
+import java.util.Date;
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
  * @author matti
  */
+@Entity
+@NamedQuery(name = "BookReview.deleteAllRows", query = "DELETE from BookReview")
 public class BookReview {
-    private String publication;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    @Temporal(TemporalType.DATE)
+    private Date publication;
     private String byline;
     private String title;
     private String author;
@@ -22,18 +36,18 @@ public class BookReview {
     }
 
     public BookReview(String publication, String byline, String title, String author, String summary) {
-        this.publication = publication;
+        this.publication = new Date();
         this.byline = byline;
         this.title = title;
         this.author = author;
         this.summary = summary;
     }
 
-    public String getPublication() {
+    public Date getPublication() {
         return publication;
     }
 
-    public void setPublication(String publication) {
+    public void setPublication(Date publication) {
         this.publication = publication;
     }
 
@@ -108,6 +122,14 @@ public class BookReview {
             return false;
         }
         return true;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

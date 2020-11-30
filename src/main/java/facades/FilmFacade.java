@@ -12,11 +12,22 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import javax.persistence.EntityManagerFactory;
 import utils.HttpUtils;
 
-public class FetchFacade {
-
+public class FilmFacade {
+ private static EntityManagerFactory emf;
+    private static FilmFacade instance;
+    public FilmFacade() {
+    }
+    public static FilmFacade getFilmFacade(EntityManagerFactory _emf) {
+        if (instance == null) {
+            emf = _emf;
+            instance = new FilmFacade();
+        }
+        return instance;
+    }
+    
     class Default implements Callable<String> {
 
         String url;
@@ -64,8 +75,12 @@ public class FetchFacade {
         return films;
     }
     
+    public void writeFilmRev(){
+        
+    }
+    
     public static void main(String[] args) throws IOException {
-        FetchFacade facade = new FetchFacade();
+        FilmFacade facade = new FilmFacade();
         System.out.println(facade.fetchReviewByTitle("harry potter"));
         System.out.println(facade.fetchReviewByTitle("lebowski"));
     }
