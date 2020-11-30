@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import dto.BookDTO;
 import dto.GoodreadsDTO;
 import dto.IdentityIsbmDTO;
@@ -60,45 +61,59 @@ public class BookFacade {
         GoodreadsDTO goodreads = null;
 
         for (Future<String> fut : futures) {
-            if (fut.get().contains("The New York Times Company.")) {
-                RawBookDTO rawBook = gson.fromJson(fut.get(), RawBookDTO.class);
-                for (BookDTO result : rawBook.getResults()) {
-                    books.add(result);
-                }
-            }
-            if (fut.get().contains("reviews_widget")) {
-                goodreads = gson.fromJson(fut.get(), GoodreadsDTO.class);
-            }
-            if (fut.get().contains("items")) {
-                System.out.println(fut.get());
-                ItemsDTO items = gson.fromJson(fut.get(), ItemsDTO.class);
-
-                IdentityIsbmDTO[] identifiers = items.getItems()[0].getVolumeInfo().getIndustryIdentifiers();
-                if (identifiers[0].toString().length() < identifiers[1].toString().length()) {
-                    isbmDTO = identifiers[0];
-                } else {
-                    isbmDTO = identifiers[1];
-                }
-
-            }
+            makeBookDTOs(fut, gson, books);
+            goodreads = makeGoodreadsDTO(fut, goodreads, gson);
+            isbmDTO = getIsbm(fut, gson, isbmDTO);
         }
 
         ReviewsDTO reviews = new ReviewsDTO(books, isbmDTO, goodreads);
         return reviews;
     }
 
-    public IdentityIsbmDTO getBookIsbn(String title) throws IOException {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String titleF = title.replace(" ", "%20");
-
-        String url = "https://www.googleapis.com/books/v1/volumes/?key=AIzaSyDmYIEO0_nFDW06PK_QZUGR4bVLmliaq60&q=" + titleF;
-        String raw = HttpUtils.fetchData(url);
-        ItemsDTO items = gson.fromJson(raw, ItemsDTO.class);
-        IdentityIsbmDTO[] identifiers = items.getItems()[0].getVolumeInfo().getIndustryIdentifiers();
-
-        IdentityIsbmDTO isbmDTO = identifiers[0];
+    private IdentityIsbmDTO getIsbm(Future<String> fut, Gson gson, IdentityIsbmDTO isbmDTO) throws JsonSyntaxException, InterruptedException, ExecutionException {
+        if (fut.get().contains("items")) {
+            ItemsDTO items = gson.fromJson(fut.get(), ItemsDTO.class);
+            
+            IdentityIsbmDTO[] identifiers = items.getItems()[0].getVolumeInfo().getIndustryIdentifiers();
+            if (identifiers[0].toString().length() < identifiers[1].toString().length()) {
+                isbmDTO = identifiers[0];
+            } else {
+                isbmDTO = identifiers[1];
+            }
+            
+        }
         return isbmDTO;
     }
+
+    private GoodreadsDTO makeGoodreadsDTO(Future<String> fut, GoodreadsDTO goodreads, Gson gson) throws InterruptedException, ExecutionException, JsonSyntaxException {
+        if (fut.get().contains("reviews_widget")) {
+            goodreads = gson.fromJson(fut.get(), GoodreadsDTO.class);
+        }
+        return goodreads;
+    }
+
+    private void makeBookDTOs(Future<String> fut, Gson gson, List<BookDTO> books) throws InterruptedException, JsonSyntaxException, ExecutionException {
+        if (fut.get().contains("The New York Times Company.")) {
+            RawBookDTO rawBook = gson.fromJson(fut.get(), RawBookDTO.class);
+            for (BookDTO result : rawBook.getResults()) {
+                System.out.println(result.getBook_author());
+                books.add(result);
+            }
+        }
+    }
+
+//    public IdentityIsbmDTO getBookIsbn(String title) throws IOException {
+//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//        String titleF = title.replace(" ", "%20");
+//
+//        String url = "https://www.googleapis.com/books/v1/volumes/?key=AIzaSyDmYIEO0_nFDW06PK_QZUGR4bVLmliaq60&q=" + titleF;
+//        String raw = HttpUtils.fetchData(url);
+//        ItemsDTO items = gson.fromJson(raw, ItemsDTO.class);
+//        IdentityIsbmDTO[] identifiers = items.getItems()[0].getVolumeInfo().getIndustryIdentifiers();
+//
+//        IdentityIsbmDTO isbmDTO = identifiers[0];
+//        return isbmDTO;
+//    }
 
     public List<String> fetchParallel() throws InterruptedException, ExecutionException {
         String[] hostList = {"https://api.chucknorris.io/jokes/random", "https://icanhazdadjoke.com",

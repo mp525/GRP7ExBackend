@@ -7,8 +7,10 @@ package facades;
 
 import dto.BookDTO;
 import dto.RawBookDTO;
+import dto.ReviewsDTO;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
@@ -45,12 +47,30 @@ public class BookFacadeTest {
     }
 
     @Test
-    public void testFetchBookReviewsOld() throws IOException, IOException{
-        
+    public void testFetchBookReviewsOld() throws IOException, IOException{ 
         String title = "Becoming";
         String expected = "Michelle Obama";
         List<BookDTO> dtoList = facade.fetchBookReviewsOld(title);
         assertEquals(expected, dtoList.get(0).getBook_author());
+    }
+    
+    @Test
+    public void testFetchBookReviewsBooks() throws IOException, InterruptedException, ExecutionException{
+        String title = "Becoming";
+        ReviewsDTO dto = facade.fetchBookReviews(title);
+        assertTrue(!dto.getBookDTOs().isEmpty());
+    }
+    @Test
+    public void testFetchBookReviewsIsbn() throws IOException, InterruptedException, ExecutionException{
+        String title = "Becoming";
+        ReviewsDTO dto = facade.fetchBookReviews(title);
+        assertTrue(dto.getIsbm().getIdentifier().length() > 0);
+    }
+    @Test
+    public void testFetchBookReviewsWidget() throws IOException, InterruptedException, ExecutionException{
+        String title = "Becoming";
+        ReviewsDTO dto = facade.fetchBookReviews(title);
+        assertTrue(dto.getGoodreads().getReviews_widget().contains("Becoming"));
     }
     
 }
