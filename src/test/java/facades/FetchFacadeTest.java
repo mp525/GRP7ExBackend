@@ -24,7 +24,7 @@ import utils.EMF_Creator;
 public class FetchFacadeTest {
     
     private static EntityManagerFactory emf;
-    private static FetchFacade facade;
+    private static FilmFacade facade;
     
     public FetchFacadeTest() {
     }
@@ -32,7 +32,7 @@ public class FetchFacadeTest {
     @BeforeAll
     public static void setUpClass() {
         emf = EMF_Creator.createEntityManagerFactoryForTest();
-        facade = new FetchFacade();
+        facade = new FilmFacade();
     }
     
     @AfterAll
