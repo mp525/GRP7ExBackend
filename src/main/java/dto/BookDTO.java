@@ -5,6 +5,8 @@
  */
 package dto;
 
+import entities.BookReview;
+
 /**
  *
  * @author Mathias
@@ -24,6 +26,15 @@ public class BookDTO {
         this.book_title = book_title;
         this.book_author = book_author;
         this.summary = summary;
+    }
+    
+     public BookDTO(BookReview review) {
+        this.url = "none";
+        this.publication_dt = review.getPublication().toString();
+        this.byline = review.getByline();
+        this.book_title = review.getTitle();
+        this.book_author = review.getAuthor();
+        this.summary = review.getSummary();
     }
 
     public String getUrl() {

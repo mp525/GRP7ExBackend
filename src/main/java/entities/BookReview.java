@@ -35,7 +35,7 @@ public class BookReview {
     public BookReview() {
     }
 
-    public BookReview(String publication, String byline, String title, String author, String summary) {
+    public BookReview(String byline, String title, String author, String summary) {
         this.publication = new Date();
         this.byline = byline;
         this.title = title;
