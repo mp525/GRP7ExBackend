@@ -55,8 +55,6 @@ public class FilmResource {
     @Path("add")
     @Produces(MediaType.APPLICATION_JSON)
     public FilmDTO addFilmReview(String filmReview) throws IOException {
-        
-        
         FilmDTO fr = GSON.fromJson(filmReview, FilmDTO.class);        
         facade.writeFilmRev(fr);
         return fr;

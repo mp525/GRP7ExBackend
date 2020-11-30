@@ -38,8 +38,8 @@ public class FilmReview implements Serializable {
         this.id = id;
     }
 
-    public FilmReview(int id, String display_title, String headline, String summary_short, String publication_date) {
-        this.id = id;
+    public FilmReview(String display_title, String headline, String summary_short) {
+        
         this.display_title = display_title;
         this.headline = headline;
         this.summary_short = summary_short;

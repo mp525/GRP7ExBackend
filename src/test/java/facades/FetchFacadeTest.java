@@ -1,7 +1,9 @@
 package facades;
 
 import dto.FilmDTO;
+import entities.FilmReview;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import static org.hamcrest.MatcherAssert.assertThat;
 import org.hamcrest.Matchers;
@@ -25,7 +27,9 @@ public class FetchFacadeTest {
     
     private static EntityManagerFactory emf;
     private static FilmFacade facade;
-    
+      private FilmReview f1;
+    private FilmReview f2;
+    private FilmReview f3;
     public FetchFacadeTest() {
     }
     
@@ -42,6 +46,21 @@ public class FetchFacadeTest {
     //Setup the DataBase in a known state BEFORE EACH TEST
     @BeforeEach
     public void setUp() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            f1=new FilmReview("Bob","binno","bulkabilo");
+             f2=new FilmReview("Bob2","binno2","bulkabilo2"); 
+             f3=new FilmReview("Bob3","binno3","bulkabilo3");
+             
+            em.getTransaction().begin();
+            em.createNamedQuery("FilmReview.deleteAllRows").executeUpdate();            
+            em.persist(f1);
+            em.persist(f2);
+            em.persist(f3);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
     }
     
     @AfterEach
@@ -90,4 +109,9 @@ public class FetchFacadeTest {
 //        ));
 //    }
     
+    @Test
+    public void testAdd() throws Exception {
+    facade.writeFilmRev(new FilmDTO(f1));
+    
+    }
 }
