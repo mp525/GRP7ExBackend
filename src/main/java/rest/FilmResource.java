@@ -13,7 +13,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
 import javax.ws.rs.core.MediaType;
-import facades.FetchFacade;
+import facades.FilmFacade;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.PathParam;
@@ -25,7 +25,7 @@ import javax.ws.rs.PathParam;
  */
 @Path("film")
 public class FilmResource {
-    private final FetchFacade facade = new FetchFacade();
+    private final FilmFacade facade = new FilmFacade();
     private final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @Context
