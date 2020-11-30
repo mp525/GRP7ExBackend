@@ -24,20 +24,25 @@ import java.util.concurrent.Future;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+import utils.EMF_Creator;
 import utils.HttpUtils;
 
 public class BookFacade {
 
-    //private static BookFacade instance;
-    private static EntityManagerFactory emf;
+    private static BookFacade instance;
+    private static EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
 
-//    public static BookFacade getBookFacade(EntityManagerFactory _emf) {
-//        if (instance == null) {
-//            emf = _emf;
-//            instance = new BookFacade();
-//        }
-//        return instance;
-//    }
+    public BookFacade() {
+    }
+
+    public static BookFacade getBookFacade(EntityManagerFactory _emf) {
+        if (instance == null) {
+            emf = _emf;
+            instance = new BookFacade();
+        }
+        return instance;
+    }
+
     class Default implements Callable<String> {
 
         String url;
@@ -80,6 +85,13 @@ public class BookFacade {
             isbmDTO = getIsbm(fut, gson, isbmDTO);
         }
 
+        List<BookDTO> userReviews = getUserReviews(title);
+        if (!(userReviews.isEmpty())) {
+            for (BookDTO userReview : userReviews) {
+                books.add(userReview);
+            }
+        }
+
         ReviewsDTO reviews = new ReviewsDTO(books, isbmDTO, goodreads);
         return reviews;
     }
@@ -120,11 +132,11 @@ public class BookFacade {
         List<BookDTO> list = new ArrayList();
         EntityManager em = emf.createEntityManager();
 
-        TypedQuery<BookReview> query = em.createQuery("SELECT b FROM BookReview b WHERE a.title LIKE :title", BookReview.class);
-        query.setParameter("title", title);
+        TypedQuery<BookReview> query = em.createQuery("SELECT b FROM BookReview b WHERE b.title LIKE :title", BookReview.class);
+        query.setParameter("title", "%" + title + "%");
         List<BookReview> reviews = query.getResultList();
 
-        if (!reviews.isEmpty()) {
+        if (!(reviews.isEmpty())) {
             for (BookReview review : reviews) {
                 list.add(new BookDTO(review));
             }
@@ -180,8 +192,20 @@ public class BookFacade {
 
     public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
         BookFacade facade = new BookFacade();
+        EntityManagerFactory emf2 = EMF_Creator.createEntityManagerFactory();
+         EntityManager em = emf2.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            //em.createNamedQuery("BookReview.deleteAllRows").executeUpdate();
+            //em.persist(new BookReview("byline1", "title1", "author1", "review1"));
+            em.persist(new BookReview("Mathias P", "Becoming", "Michelle Obama", "This book is probably the best book ever written in the entire universe."));
 
-        System.out.println(facade.fetchBookReviews("1Q84").toString());
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+
+        //System.out.println(facade.fetchBookReviews("1Q84").toString());
         //System.out.println(facade.getBookIsbn("Quilting For Dummies"));
     }
 
