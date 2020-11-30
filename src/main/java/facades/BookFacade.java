@@ -12,6 +12,7 @@ import dto.IdentityIsbmDTO;
 import dto.ItemsDTO;
 import dto.RawBookDTO;
 import dto.ReviewsDTO;
+import entities.BookReview;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +21,23 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 import utils.HttpUtils;
 
 public class BookFacade {
 
+    //private static BookFacade instance;
+    private static EntityManagerFactory emf;
+
+//    public static BookFacade getBookFacade(EntityManagerFactory _emf) {
+//        if (instance == null) {
+//            emf = _emf;
+//            instance = new BookFacade();
+//        }
+//        return instance;
+//    }
     class Default implements Callable<String> {
 
         String url;
@@ -73,14 +87,14 @@ public class BookFacade {
     private IdentityIsbmDTO getIsbm(Future<String> fut, Gson gson, IdentityIsbmDTO isbmDTO) throws JsonSyntaxException, InterruptedException, ExecutionException {
         if (fut.get().contains("items")) {
             ItemsDTO items = gson.fromJson(fut.get(), ItemsDTO.class);
-            
+
             IdentityIsbmDTO[] identifiers = items.getItems()[0].getVolumeInfo().getIndustryIdentifiers();
             if (identifiers[0].toString().length() < identifiers[1].toString().length()) {
                 isbmDTO = identifiers[0];
             } else {
                 isbmDTO = identifiers[1];
             }
-            
+
         }
         return isbmDTO;
     }
@@ -102,6 +116,23 @@ public class BookFacade {
         }
     }
 
+    public List<BookDTO> getUserReviews(String title) {
+        List<BookDTO> list = new ArrayList();
+        EntityManager em = emf.createEntityManager();
+
+        TypedQuery<BookReview> query = em.createQuery("SELECT b FROM BookReview b WHERE a.title LIKE :title", BookReview.class);
+        query.setParameter("title", title);
+        List<BookReview> reviews = query.getResultList();
+
+        if (!reviews.isEmpty()) {
+            for (BookReview review : reviews) {
+                list.add(new BookDTO(review));
+            }
+        }
+
+        return list;
+    }
+
 //    public IdentityIsbmDTO getBookIsbn(String title) throws IOException {
 //        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 //        String titleF = title.replace(" ", "%20");
@@ -114,7 +145,6 @@ public class BookFacade {
 //        IdentityIsbmDTO isbmDTO = identifiers[0];
 //        return isbmDTO;
 //    }
-
     public List<String> fetchParallel() throws InterruptedException, ExecutionException {
         String[] hostList = {"https://api.chucknorris.io/jokes/random", "https://icanhazdadjoke.com",
             "https://swapi.dev/api/planets/schema", "https://swapi.dev/api/vehicles/schema", "https://swapi.dev/api/species/schema"};
@@ -134,8 +164,8 @@ public class BookFacade {
 
         return retList;
     }
-    
-    public List<BookDTO> fetchBookReviewsOld(String title) throws IOException{
+
+    public List<BookDTO> fetchBookReviewsOld(String title) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         List<BookDTO> books = new ArrayList();
         String url = "https://api.nytimes.com/svc/books/v3/reviews.json?api-key=5tN35qLGRRkvgYSCFj7wKdwhDNb5PMOF" + "&title=" + title;
