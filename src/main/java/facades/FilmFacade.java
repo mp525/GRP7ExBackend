@@ -15,10 +15,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import utils.EMF_Creator;
 import utils.HttpUtils;
 
 public class FilmFacade {
- private static EntityManagerFactory emf;
+ private static EntityManagerFactory emf =EMF_Creator.createEntityManagerFactory();
     private static FilmFacade instance;
     public FilmFacade() {
     }
@@ -78,11 +79,13 @@ public class FilmFacade {
     }
     
     public FilmDTO writeFilmRev(FilmDTO fr){
-        
         FilmReview fr1 = new FilmReview(fr);
+        System.out.println(fr1.toString());
+        System.out.println(fr.toString());
         EntityManager em = emf.createEntityManager();
         try{
             em.getTransaction().begin();
+            System.out.println(fr1);
             em.persist(fr1);
             em.getTransaction().commit();
             return new FilmDTO(fr1);
@@ -98,6 +101,7 @@ public class FilmFacade {
         FilmDTO fr = new FilmDTO("Harry Potter","OMG ITS GREAT"," it was so great holy shit idk what to say");
         System.out.println(facade.fetchReviewByTitle("harry potter"));
         System.out.println(facade.fetchReviewByTitle("lebowski"));
+        System.out.println(facade.writeFilmRev(fr));
     }
 
 }
