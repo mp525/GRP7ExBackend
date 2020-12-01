@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -177,4 +178,23 @@ public class RenameMeResourceTest {
         FilmDTO f7 = list.get(6);
         assertThat(list, contains(f1, f2, f3,f4,f5,f6,f7));
     }
-}
+    
+     @Test
+    public void testPostReview() throws Exception {
+//          login("user","test");  
+//        given()
+//                .contentType("application/json")
+//                .body(new FilmDTO("display_title", "headline", "summary_short"))
+//                .when()
+//                .post("/film/add")
+//                .then()
+//                .body("display_title", equalTo("display_title"))
+//                .body("headline", equalTo("headline"))
+//                .body("summary_short", equalTo("summary_short"));
+//        
+        
+    }
+
+                
+    }
+

@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import facades.FilmFacade;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
  
 /**
@@ -50,5 +51,17 @@ public class FilmResource {
         List<FilmDTO> list = facade.fetchReviewByTitle(title);
         return GSON.toJson(list);
     }
-   
+   @POST
+   @RolesAllowed("user")
+    @Path("add")
+    @Produces(MediaType.APPLICATION_JSON)
+    public FilmDTO addFilmReview(String filmReview) throws IOException {
+        
+        
+        FilmDTO fr = GSON.fromJson(filmReview, FilmDTO.class);        
+        facade.writeFilmRev(fr);
+        return fr;
+       
+    }
+    
 }

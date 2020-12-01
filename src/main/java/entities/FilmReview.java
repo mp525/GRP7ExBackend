@@ -1,5 +1,6 @@
 package entities;
 
+import dto.FilmDTO;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -37,11 +38,19 @@ public class FilmReview implements Serializable {
         this.id = id;
     }
 
-    public FilmReview(int id, String display_title, String headline, String summary_short, String publication_date) {
-        this.id = id;
+    public FilmReview(String display_title, String headline, String summary_short) {
+        
         this.display_title = display_title;
         this.headline = headline;
         this.summary_short = summary_short;
+        this.publication_date = new Date();
+    }
+    
+    public FilmReview(FilmDTO f) {
+        
+        this.display_title = f.getDisplay_title();
+        this.headline = f.getHeadline();
+        this.summary_short = f.getSummary_short();
         this.publication_date = new Date();
     }
 

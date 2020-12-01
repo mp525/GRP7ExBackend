@@ -1,6 +1,8 @@
 package utils;
 
 
+import dto.FilmDTO;
+import entities.FilmReview;
 import entities.Role;
 import entities.User;
 
@@ -26,6 +28,8 @@ public class SetupTestUsers {
 
     if(admin.getUserPass().equals("test")||user.getUserPass().equals("test")||both.getUserPass().equals("test"))
       throw new UnsupportedOperationException("You have not changed the passwords");
+        FilmDTO fr1 = new FilmDTO("Harry Potter","OMG ITS GREAT"," it was so great holy shit idk what to say");
+        FilmReview fr = new FilmReview(fr1);
 
     em.getTransaction().begin();
     Role userRole = new Role("user");
@@ -39,6 +43,7 @@ public class SetupTestUsers {
     em.persist(user);
     em.persist(admin);
     em.persist(both);
+    em.persist(fr);
     em.getTransaction().commit();
     System.out.println("PW: " + user.getUserPass());
     System.out.println("Testing user with OK password: " + user.verifyPassword("test"));

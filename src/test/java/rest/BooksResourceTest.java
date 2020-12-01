@@ -5,26 +5,38 @@
  */
 package rest;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import dto.BookDTO;
 import entities.Role;
 import entities.User;
+import facades.BookFacade;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
 import io.restassured.parsing.Parser;
+import java.io.IOException;
 import java.net.URI;
+import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
-import static org.hamcrest.Matchers.equalTo;
-import org.junit.jupiter.api.AfterEach;
+import org.hamcrest.Matchers;
+import static org.hamcrest.Matchers.hasItem;
+
+import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import static rest.LoginEndpointTest.startServer;
 import utils.EMF_Creator;
 
 /**
@@ -40,6 +52,9 @@ public class BooksResourceTest {
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
     private static EntityManagerFactory emf;
+    private final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private final BookFacade facade = new BookFacade();
+
     
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
@@ -123,17 +138,51 @@ public class BooksResourceTest {
         given().when().get("/info").then().statusCode(200);
     }
     
-   // @Test
-    public void testGetReviews() {
+    @Test
+    public void testGetReviewsOld() {
         login("user", "test");
         given()
                 .contentType("application/json")
                 .header("x-access-token", securityToken)
                 .when()
-                .get("/books/reviews/Becoming").then()
+                .get("/books/reviewsOld/Becoming").then()
                 .statusCode(200)
-                .body("book_author", equalTo("Michelle Obama"));
+                .body("book_author", Matchers.contains("Michelle Obama"));
+    }
+    
+    //@Test
+    public void testGetReviewsBooks() {
+        login("user", "test");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .when()
+                .get("/books/reviews/Becoming")
+                .then()
+                .statusCode(200)
+                .assertThat()
+                .body("bookDTOs", hasItem(
+                Matchers.<BookDTO>hasProperty("book_title", is("Becoming"))));
+        
+    }
+    
+   // @Test
+    public void testGetReviewsBooksT() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        login("user", "test");
+       List<BookDTO> list = given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .when()
+                .get("/books/reviews/Becoming")
+                .then()
+                .statusCode(200).extract().body().jsonPath().getList("bookDTOs");
+               String json = "{url=https://www.nytimes.com/2018/12/06/books/review/michelle-obama-becoming-memoir.html, publication_dt=2018-12-06, byline=Isabel Wilkerson, book_title=Becoming, book_author=Michelle Obama, summary=The former first lady’s long-awaited new memoir recounts with insight, candor and wit her family’s trajectory from the Jim Crow South to Chicago’s South Side and her own improbable journey from there to the White House.}";
+       BookDTO dto = gson.fromJson(json, BookDTO.class);
+        System.out.println(list);
+       assertEquals(dto, list.get(0));
+        
     }
 
-    
+   
 }
