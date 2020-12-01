@@ -86,6 +86,7 @@ public class BooksResource {
     }
     @POST
     @Path("add")
+    @RolesAllowed("user")
     @Produces(MediaType.APPLICATION_JSON)
     public BookDTO addBookReview(String bookReview) throws IOException {
         
