@@ -18,6 +18,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -92,6 +93,26 @@ public class BooksResource {
         BookDTO fr = GSON.fromJson(bookReview, BookDTO.class);        
         facade.writeBookRev(fr);
         return fr;
+       
+    }
+    @PUT
+    @Path("edit")
+    @RolesAllowed("admin")
+    @Produces(MediaType.APPLICATION_JSON)
+    public BookDTO editBookReview(String bookReview) throws IOException {
+        BookDTO fr = GSON.fromJson(bookReview, BookDTO.class);        
+        facade.editBookRev(fr);
+        return fr;
+       
+    }
+    @DELETE
+    @Path("delete/{id}")
+    @RolesAllowed("admin")
+    @Produces(MediaType.APPLICATION_JSON)
+    public BookDTO deleteBookReview(@PathParam("id")int id) throws IOException {
+                
+        facade.deleteBookRev(id);
+        return new BookDTO("It","has","been","deleted");
        
     }
 }
