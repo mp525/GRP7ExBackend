@@ -129,4 +129,4 @@ public class BookFacadeTest {
     List<BookDTO> resultList = facade.getUserReviews("matti");
         assertTrue(resultList.size()==1);
     }
-    }
+}

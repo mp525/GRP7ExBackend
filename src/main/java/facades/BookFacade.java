@@ -220,5 +220,34 @@ public BookDTO writeBookRev(BookDTO fr){
             return new BookDTO(b);
         }finally {
             em.close();
-        }}
+        }
+}
+public BookDTO editBookRev(BookDTO fr){
+        
+        
+        EntityManager em = emf.createEntityManager();
+        BookReview b = em.find(BookReview.class, fr.getId());
+        try{
+            em.getTransaction().begin();
+            em.merge(b);
+            em.getTransaction().commit();
+            return new BookDTO(b);
+        }finally {
+            em.close();
+        }
+}
+public void deleteBookRev(int nr){
+        
+        EntityManager em = emf.createEntityManager();
+        BookReview b = em.find(BookReview.class, nr);
+
+        try{
+            em.getTransaction().begin();
+            em.remove(b);
+            em.getTransaction().commit();
+        }finally {
+            em.close();
+        }
+}
+
 }
