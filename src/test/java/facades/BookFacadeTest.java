@@ -51,13 +51,15 @@ public class BookFacadeTest {
 
     @BeforeEach
     public void setUp() { 
+        
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
+            b3=new BookReview("byline3", "title3", "author3", "review3");
             em.createNamedQuery("BookReview.deleteAllRows").executeUpdate();
             em.persist(new BookReview("byline1", "title1", "author1", "review1"));
             em.persist(new BookReview("byline2", "title2", "author2", "review2"));
-            b3=new BookReview("byline3", "title3", "author3", "review3");
+            em.persist(b3);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -123,10 +125,32 @@ public class BookFacadeTest {
     
     @Test
     public void testAddworks() throws Exception {
-                BookDTO b=new BookDTO(new BookReview("byline","matti","book_author","summary"));
+        BookDTO b=new BookDTO(new BookReview("byline","matti","book_author","summary"));
         facade.writeBookRev(b).getBook_author();
 
-    List<BookDTO> resultList = facade.getUserReviews("matti");
+        List<BookDTO> resultList = facade.getUserReviews("matti");
         assertTrue(resultList.size()==1);
+    }
+    
+    @Test
+    public void testEditWorks() throws Exception {
+            BookDTO b=new BookDTO(b3);
+            List<BookDTO> resultList = facade.getUserReviews("title3");
+            System.out.println(resultList);
+            b.setSummary("BIBOB den er god");
+            facade.editBookRev(b);
+
+             resultList = facade.getUserReviews("title3");
+            System.out.println("Here is the edited list"+resultList);
+            assertTrue("BIBOB den er god".equals(resultList.get(0).getSummary()));
+    }
+    @Test
+    public void testDeleteWorks() throws Exception {
+        List<BookDTO> resultList = facade.getUserReviews("title3");
+        int nr=b3.getId();
+        
+        facade.deleteBookRev(nr);     
+        resultList = facade.getUserReviews("title3");
+        assertTrue(resultList.isEmpty());
     }
 }

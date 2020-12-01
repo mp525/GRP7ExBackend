@@ -97,6 +97,9 @@ public class FilmFacade {
         FilmReview fr1 = em.find(FilmReview.class, fr.getId());
         try{
             em.getTransaction().begin();
+            fr1.setDisplay_title(fr.getDisplay_title());
+            fr1.setHeadline(fr.getHeadline());
+            fr1.setSummary_short(fr.getSummary_short());
             em.merge(fr1);
             em.getTransaction().commit();
             return new FilmDTO(fr1);
@@ -122,7 +125,7 @@ public class FilmFacade {
         FilmDTO fr = new FilmDTO("Harry Potter","OMG ITS GREAT"," it was so great holy shit idk what to say");
         System.out.println(facade.fetchReviewByTitle("harry potter"));
         System.out.println(facade.fetchReviewByTitle("lebowski"));
-        facade.deleteFilmRev(1);
+        //facade.deleteFilmRev(1);
     }
 
 }
