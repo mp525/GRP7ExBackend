@@ -6,6 +6,7 @@
 package dto;
 
 import entities.BookReview;
+import java.util.Date;
 
 /**
  *
@@ -27,7 +28,14 @@ public class BookDTO {
         this.book_author = book_author;
         this.summary = summary;
     }
-    
+    public BookDTO( String byline, String book_title, String book_author, String summary) {
+        this.url = "none";
+        this.publication_dt = new Date().toString();
+        this.byline = byline;
+        this.book_title = book_title;
+        this.book_author = book_author;
+        this.summary = summary;
+    }
      public BookDTO(BookReview review) {
         this.url = "none";
         this.publication_dt = review.getPublication().toString();

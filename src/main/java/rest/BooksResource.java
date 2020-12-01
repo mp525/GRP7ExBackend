@@ -89,8 +89,6 @@ public class BooksResource {
     @RolesAllowed("user")
     @Produces(MediaType.APPLICATION_JSON)
     public BookDTO addBookReview(String bookReview) throws IOException {
-        
-        
         BookDTO fr = GSON.fromJson(bookReview, BookDTO.class);        
         facade.writeBookRev(fr);
         return fr;

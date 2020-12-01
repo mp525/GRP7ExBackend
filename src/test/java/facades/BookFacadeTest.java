@@ -114,12 +114,10 @@ public class BookFacadeTest {
     }
     
      @Test
-    public void testAdd() throws Exception {
-        List<BookDTO> resultList = facade.getUserReviews("title");
+    public void testAddDataResponse() throws Exception {
         BookDTO b=new BookDTO(new BookReview("bob","bob","bob","bob"));
-        facade.writeBookRev(b);
+        assertEquals(b.getBook_author(),facade.writeBookRev(b).getBook_author());
         
-        
-         System.out.println(resultList);
+         
     }
 }

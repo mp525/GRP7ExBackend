@@ -110,8 +110,8 @@ public class FetchFacadeTest {
 //    }
     
     @Test
-    public void testAdd() throws Exception {
-    facade.writeFilmRev(new FilmDTO(f1));
-    
+    public void testAddDataResponse() throws Exception {
+    FilmDTO f=facade.writeFilmRev(new FilmDTO(f1));
+    assertEquals(f1.getSummary_short(),f.getSummary_short());
     }
 }
