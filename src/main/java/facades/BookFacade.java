@@ -122,7 +122,7 @@ public class BookFacade {
         if (fut.get().contains("The New York Times Company.")) {
             RawBookDTO rawBook = gson.fromJson(fut.get(), RawBookDTO.class);
             for (BookDTO result : rawBook.getResults()) {
-                System.out.println(result.getBook_author());
+                //System.out.println(result.getBook_author());
                 books.add(result);
             }
         }

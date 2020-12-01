@@ -71,7 +71,17 @@ public class BookFacadeTest {
     @Test
     public void testGetUserReviews(){
         List<BookDTO> resultList = facade.getUserReviews("title");
+
         assertTrue(!resultList.isEmpty());
+    }
+    
+    @Test
+    public void testGetUserReviewsAlt(){
+        List<BookDTO> resultList = facade.getUserReviews("title1");
+        //System.out.println(resultList);
+        BookDTO dto = resultList.get(0);
+        
+        assertEquals(dto.getBook_title(), "title1");
     }
 
     @Test
