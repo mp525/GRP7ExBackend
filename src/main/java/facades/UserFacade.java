@@ -5,13 +5,14 @@ import entities.User;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import security.errorhandling.AuthenticationException;
+import utils.EMF_Creator;
 
 /**
  * @author lam@cphbusiness.dk
  */
 public class UserFacade {
 
-    private static EntityManagerFactory emf;
+    private static EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
     private static UserFacade instance;
 
     private UserFacade() {
@@ -58,6 +59,12 @@ public class UserFacade {
             em.close();
         }
         return user;
+    }
+    
+    public static void main(String[] args) {
+        UserFacade uf = new UserFacade();
+        uf.registerUser("hei", "hell");
+        //instance.registerUser("fuck", "this");
     }
 
 }
