@@ -9,6 +9,7 @@ import dto.BookDTO;
 import dto.RawBookDTO;
 import dto.ReviewsDTO;
 import entities.BookReview;
+import entities.FilmReview;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -32,7 +33,9 @@ public class BookFacadeTest {
     private static BookFacade facade = new BookFacade();
 
     ;
-    
+     private BookReview b1;
+    private BookReview b2;
+    private BookReview b3;
     public BookFacadeTest() {
     }
 
@@ -54,7 +57,7 @@ public class BookFacadeTest {
             em.createNamedQuery("BookReview.deleteAllRows").executeUpdate();
             em.persist(new BookReview("byline1", "title1", "author1", "review1"));
             em.persist(new BookReview("byline2", "title2", "author2", "review2"));
-
+            b3=new BookReview("byline3", "title3", "author3", "review3");
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -68,7 +71,6 @@ public class BookFacadeTest {
     @Test
     public void testGetUserReviews(){
         List<BookDTO> resultList = facade.getUserReviews("title");
-        System.out.println(resultList);
         assertTrue(!resultList.isEmpty());
     }
 
@@ -103,7 +105,11 @@ public class BookFacadeTest {
     
      @Test
     public void testAdd() throws Exception {
-    facade.writeBookRev(new BookDTO(new BookReview("","","","")));
-    
+        List<BookDTO> resultList = facade.getUserReviews("title");
+        BookDTO b=new BookDTO(new BookReview("bob","bob","bob","bob"));
+        facade.writeBookRev(b);
+        
+        
+         System.out.println(resultList);
     }
 }
