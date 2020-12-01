@@ -120,4 +120,13 @@ public class BookFacadeTest {
         
          
     }
-}
+    
+    @Test
+    public void testAddworks() throws Exception {
+                BookDTO b=new BookDTO(new BookReview("byline","matti","book_author","summary"));
+        facade.writeBookRev(b).getBook_author();
+
+    List<BookDTO> resultList = facade.getUserReviews("matti");
+        assertTrue(resultList.size()==1);
+    }
+    }
