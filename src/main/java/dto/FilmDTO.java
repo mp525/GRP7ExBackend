@@ -69,7 +69,9 @@ public FilmDTO(FilmReview fr) {
 
     @Override
     public String toString() {
-        return "FilmDTO{" + "display_title=" + display_title + ", headline=" + headline + ", summary_short=" + summary_short + ", publication_date=" + publication_date + '}';
+        return "FilmDTO{" + "id=" + id + ", display_title=" + display_title + ", headline=" + headline + ", summary_short=" + summary_short + ", publication_date=" + publication_date + '}';
     }
+
+   
     
 }

@@ -36,7 +36,7 @@ public class FetchFacadeTest {
     @BeforeAll
     public static void setUpClass() {
         emf = EMF_Creator.createEntityManagerFactoryForTest();
-        facade = new FilmFacade();
+        facade = FilmFacade.getFilmFacade(emf);
     }
     
     @AfterAll
@@ -48,7 +48,7 @@ public class FetchFacadeTest {
     public void setUp() {
         EntityManager em = emf.createEntityManager();
         try {
-            f1=new FilmReview("Bob","binno","bulkabilo");
+            f1=new FilmReview("oklahoma","binno","bulkabilo");
              f2=new FilmReview("Bob2","binno2","bulkabilo2"); 
              f3=new FilmReview("Bob3","binno3","bulkabilo3");
              
@@ -56,7 +56,7 @@ public class FetchFacadeTest {
             em.createNamedQuery("FilmReview.deleteAllRows").executeUpdate();            
             em.persist(f1);
             em.persist(f2);
-            em.persist(f3);
+            //em.persist(f3);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -90,28 +90,39 @@ public class FetchFacadeTest {
         assertThat(resultList, everyItem(hasProperty("summary_short")));
     }
     
-    /**
-     * Test of fetchReviewByTitle method, of class FetchFacade.
-     * Test of multiple search results. Does every title have the search words.
-     */
-//    @Test
-//    public void testFetchReviewsByTitle2() throws Exception {
-//        String title = "Harry Potter";
-//        List<FilmDTO> resultList = facade.fetchReviewByTitle(title);
-//        assertThat(resultList, hasItems(
-//                Matchers.<FilmDTO>hasProperty("display_title", is("Harry Potter and the Sorcerer\\u0027s Stone")),
-//                Matchers.<FilmDTO>hasProperty("display_title", is("Harry Potter and the Chamber of Secrets")),
-//                Matchers.<FilmDTO>hasProperty("display_title", is("Harry Potter and the Prisoner of Azkaban")),
-//                Matchers.<FilmDTO>hasProperty("display_title", is("Harry Potter and the Order of the Phoenix")),
-//                Matchers.<FilmDTO>hasProperty("display_title", is("Harry Potter and the Half-Blood Prince")),
-//                Matchers.<FilmDTO>hasProperty("display_title", is("Harry Potter and the Deathly Hallows: Part 1")),
-//                Matchers.<FilmDTO>hasProperty("display_title", is("Harry Potter and the Deathly Hallows: Part 2"))
-//        ));
-//    }
-    
     @Test
     public void testAddDataResponse() throws Exception {
     FilmDTO f=facade.writeFilmRev(new FilmDTO(f1));
     assertEquals(f1.getSummary_short(),f.getSummary_short());
+    }
+    
+    //tester om add kan adde et film review
+    @Test
+    public void testAddworks() throws Exception {
+        FilmDTO b=new FilmDTO(new FilmReview("matti","book_author","summary"));
+        facade.writeFilmRev(b);
+        List<FilmDTO> resultList = facade.getUserFilmRev("matti");
+        assertTrue(resultList.size()==1);
+    }
+    
+    //Tester om edit kan edit et filmreview
+    @Test
+    public void testEditWorks() throws Exception {
+            FilmDTO b=new FilmDTO(f1);
+            List<FilmDTO> resultList = facade.getUserFilmRev("oklahoma");
+            System.out.println("before edit"+resultList);
+            b.setSummary_short("BIBOB den er god");
+            facade.editFilmRev(b);
+            resultList = facade.getUserFilmRev("oklahoma");
+            assertTrue("BIBOB den er god".equals(resultList.get(0).getSummary_short()));
+    }
+    //Tester om delete kan delete et film review
+    @Test
+    public void testDeleteWorks() throws Exception {
+        List<FilmDTO> resultList = facade.getUserFilmRev("oklahoma");
+        int nr=f1.getId();
+        facade.deleteFilmRev(nr);     
+        resultList = facade.getUserFilmRev("oklahoma");
+        assertTrue(resultList.isEmpty());
     }
 }
