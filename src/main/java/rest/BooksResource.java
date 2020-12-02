@@ -85,6 +85,7 @@ public class BooksResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public void putJson(String content) {
     }
+    //    Sending a FilmDTO results in that dtoo being converted to an entity and send to the DB
     @POST
     @Path("add")
     @RolesAllowed("user")
@@ -95,6 +96,7 @@ public class BooksResource {
         return fr;
        
     }
+    //    Edit book using a BookDTO with an id
     @PUT
     @Path("edit")
     @RolesAllowed("admin")
@@ -105,6 +107,7 @@ public class BooksResource {
         return fr;
        
     }
+    //Sending an id to this endpoint results in the bookreview in the db with that id being deleted
     @DELETE
     @Path("delete/{id}")
     @RolesAllowed("admin")

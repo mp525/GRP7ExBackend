@@ -2,6 +2,7 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dto.BookDTO;
 import dto.FilmDTO;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -16,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import facades.FilmFacade;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
  
@@ -51,6 +53,8 @@ public class FilmResource {
         List<FilmDTO> list = facade.fetchReviewByTitle(title);
         return GSON.toJson(list);
     }
+    
+//    Sending a FilmDTO results in that dtoo being converted to an entity and send to the DB
    @POST
     @Path("add")
     @RolesAllowed("user")
@@ -61,5 +65,26 @@ public class FilmResource {
         return fr;
        
     }
-    
+//    Edit film using a FilmDTO with an id
+    @PUT
+    @Path("edit")
+    @RolesAllowed("admin")
+    @Produces(MediaType.APPLICATION_JSON)
+    public FilmDTO editBookReview(String filmrev) throws IOException {
+        FilmDTO fr = GSON.fromJson(filmrev, FilmDTO.class);        
+        facade.editFilmRev(fr);
+        return fr;
+       
+    }
+    //Sending an id to this endpoint results in the filmreview in the db with that id being deleted
+    @DELETE
+    @Path("delete/{id}")
+    @RolesAllowed("admin")
+    @Produces(MediaType.APPLICATION_JSON)
+    public FilmDTO deleteBookReview(@PathParam("id")int id) throws IOException {
+                
+        facade.deleteFilmRev(id);
+        return new FilmDTO("has","been","deleted");
+       
+    }
 }
