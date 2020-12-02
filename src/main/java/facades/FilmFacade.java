@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 import utils.EMF_Creator;
 import utils.HttpUtils;
 
@@ -72,10 +73,30 @@ public class FilmFacade {
         String url = "https://api.nytimes.com/svc/movies/v2/reviews/search.json?api-key=5tN35qLGRRkvgYSCFj7wKdwhDNb5PMOF" + "&query=" + title;
         String fetch = HttpUtils.fetchData(url);
         RawFilmDTO film = gson.fromJson(fetch, RawFilmDTO.class);
+        List<FilmDTO> userReviews = getUserFilmRev(title);
         for(FilmDTO f : film.getResults()) {
             films.add(f);
         }
+        for(FilmDTO f : userReviews) {
+            films.add(f);
+        }
         return films;
+    }
+    
+    public List<FilmDTO> getUserFilmRev(String title) {
+        List<FilmDTO> list = new ArrayList();
+        EntityManager em = emf.createEntityManager();
+        
+        TypedQuery query = em.createQuery("SELECT f FROM FilmReview f WHERE f.display_title LIKE :title", FilmReview.class);
+        query.setParameter("title", "%" + title + "%");
+        List<FilmReview> filmRev = query.getResultList();
+        
+        if (!(filmRev.isEmpty())) {
+            for (FilmReview film : filmRev) {
+                list.add(new FilmDTO(film));
+            }
+        }
+        return list;
     }
     
     public FilmDTO writeFilmRev(FilmDTO fr){
@@ -101,7 +122,8 @@ public class FilmFacade {
         FilmDTO fr = new FilmDTO("Harry Potter","OMG ITS GREAT"," it was so great holy shit idk what to say");
         System.out.println(facade.fetchReviewByTitle("harry potter"));
         System.out.println(facade.fetchReviewByTitle("lebowski"));
-        System.out.println(facade.writeFilmRev(fr));
+        //System.out.println(facade.writeFilmRev(fr));
+        System.out.println(facade.getUserFilmRev("Harry Potter"));
     }
 
 }
