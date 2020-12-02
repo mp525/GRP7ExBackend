@@ -70,7 +70,7 @@ public class FilmResource {
     @Path("edit")
     @RolesAllowed("admin")
     @Produces(MediaType.APPLICATION_JSON)
-    public FilmDTO editBookReview(String filmrev) throws IOException {
+    public FilmDTO editFilmReview(String filmrev) throws IOException {
         FilmDTO fr = GSON.fromJson(filmrev, FilmDTO.class);        
         facade.editFilmRev(fr);
         return fr;
@@ -81,8 +81,7 @@ public class FilmResource {
     @Path("delete/{id}")
     @RolesAllowed("admin")
     @Produces(MediaType.APPLICATION_JSON)
-    public FilmDTO deleteBookReview(@PathParam("id")int id) throws IOException {
-                
+    public FilmDTO deleteFilmReview(@PathParam("id")int id) throws IOException {                
         facade.deleteFilmRev(id);
         return new FilmDTO("has","been","deleted");
        
