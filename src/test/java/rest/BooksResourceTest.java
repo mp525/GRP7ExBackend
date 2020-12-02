@@ -8,6 +8,8 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.BookDTO;
+import dto.FilmDTO;
+import entities.BookReview;
 import entities.Role;
 import entities.User;
 import facades.BookFacade;
@@ -29,6 +31,7 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.hamcrest.Matchers;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 
 import static org.hamcrest.Matchers.is;
@@ -183,6 +186,22 @@ public class BooksResourceTest {
        assertEquals(dto, list.get(0));
         
     }
-
+@Test
+    public void testPostReview() throws Exception {
+          login("user","test");  
+        given()
+                .contentType("application/json")
+                .body(new BookDTO("byline","book_title","book_author","summary"))
+                .header("x-access-token", securityToken)
+                .when()
+                .post("/books/add")
+                .then()
+                .body("book_title", equalTo("book_title"))
+                .body("book_author", equalTo("book_author"))
+                .body("byline", equalTo("byline"))
+                .body("summary", equalTo("summary"));
+        
+        
+    }
    
 }

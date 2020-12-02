@@ -43,6 +43,13 @@ public class BookReview {
         this.author = author;
         this.summary = summary;
     }
+    public BookReview(int id,String byline, String title, String author, String summary) {
+        this.publication = new Date();
+        this.byline = byline;
+        this.title = title;
+        this.author = author;
+        this.summary = summary;
+    }
 public BookReview(BookDTO d) {
         this.publication = new Date();
         this.byline = d.getByline();

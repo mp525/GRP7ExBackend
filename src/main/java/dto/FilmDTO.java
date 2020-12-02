@@ -8,6 +8,7 @@ import java.util.Date;
  * @author vnord
  */
 public class FilmDTO {
+    private int id;
     private String display_title;
     private String headline;
     private String summary_short;
@@ -20,6 +21,7 @@ public class FilmDTO {
         this.publication_date = new Date();
     }
 public FilmDTO(FilmReview fr) {
+        this.id=fr.getId();
         this.display_title = fr.getDisplay_title();
         this.headline = fr.getHeadline();
         this.summary_short = fr.getSummary_short();
@@ -55,6 +57,14 @@ public FilmDTO(FilmReview fr) {
 
     public void setPublication_date(Date publication_date) {
         this.publication_date = publication_date;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

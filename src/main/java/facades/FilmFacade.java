@@ -113,8 +113,32 @@ public class FilmFacade {
         }finally {
             em.close();
         }}
+    public FilmDTO editFilmRev(FilmDTO fr){
+        EntityManager em = emf.createEntityManager();
+        FilmReview fr1 = em.find(FilmReview.class, fr.getId());
+        try{
+            em.getTransaction().begin();
+            fr1.setDisplay_title(fr.getDisplay_title());
+            fr1.setHeadline(fr.getHeadline());
+            fr1.setSummary_short(fr.getSummary_short());
+            em.merge(fr1);
+            em.getTransaction().commit();
+            return new FilmDTO(fr1);
+        }finally {
+            em.close();
+        }}
+    public void deleteFilmRev(int nr){
+        EntityManager em = emf.createEntityManager();
+        FilmReview b = em.find(FilmReview.class,nr);
 
-    
+        try{
+            em.getTransaction().begin();
+            em.remove(b);
+            em.getTransaction().commit();
+        }finally {
+            em.close();
+        }
+}
     
     public static void main(String[] args) throws IOException {
         
@@ -122,7 +146,6 @@ public class FilmFacade {
         FilmDTO fr = new FilmDTO("Harry Potter","OMG ITS GREAT"," it was so great holy shit idk what to say");
         System.out.println(facade.fetchReviewByTitle("harry potter"));
         System.out.println(facade.fetchReviewByTitle("lebowski"));
-        //System.out.println(facade.writeFilmRev(fr));
         System.out.println(facade.getUserFilmRev("Harry Potter"));
     }
 

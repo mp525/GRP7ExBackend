@@ -122,7 +122,7 @@ public class BookFacade {
         if (fut.get().contains("The New York Times Company.")) {
             RawBookDTO rawBook = gson.fromJson(fut.get(), RawBookDTO.class);
             for (BookDTO result : rawBook.getResults()) {
-                System.out.println(result.getBook_author());
+                //System.out.println(result.getBook_author());
                 books.add(result);
             }
         }
@@ -190,24 +190,24 @@ public class BookFacade {
         return books;
     }
     
-    public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
-        BookFacade facade = new BookFacade();
-        EntityManagerFactory emf2 = EMF_Creator.createEntityManagerFactory();
-         EntityManager em = emf2.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            //em.createNamedQuery("BookReview.deleteAllRows").executeUpdate();
-            //em.persist(new BookReview("byline1", "title1", "author1", "review1"));
-            em.persist(new BookReview("Mathias P", "Becoming", "Michelle Obama", "This book is probably the best book ever written in the entire universe."));
-
-            em.getTransaction().commit();
-        } finally {
-            em.close();
-        }
+//    public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
+//        BookFacade facade = new BookFacade();
+//        EntityManagerFactory emf2 = EMF_Creator.createEntityManagerFactory();
+//         EntityManager em = emf2.createEntityManager();
+//        try {
+//            em.getTransaction().begin();
+//            //em.createNamedQuery("BookReview.deleteAllRows").executeUpdate();
+//            //em.persist(new BookReview("byline1", "title1", "author1", "review1"));
+//            em.persist(new BookReview("Mathias P", "Becoming", "Michelle Obama", "This book is probably the best book ever written in the entire universe."));
+//
+//            em.getTransaction().commit();
+//        } finally {
+//            em.close();
+//        }
 
         //System.out.println(facade.fetchBookReviews("1Q84").toString());
         //System.out.println(facade.getBookIsbn("Quilting For Dummies"));
-    }
+    //}
 public BookDTO writeBookRev(BookDTO fr){
         BookReview b = new BookReview(fr);
         
@@ -220,5 +220,55 @@ public BookDTO writeBookRev(BookDTO fr){
             return new BookDTO(b);
         }finally {
             em.close();
-        }}
+        }
+}
+public BookDTO editBookRev(BookDTO fr){
+        
+        
+        EntityManager em = emf.createEntityManager();
+        BookReview b = em.find(BookReview.class, fr.getId());
+        try{
+            em.getTransaction().begin();
+            b.setAuthor(fr.getBook_author());
+            b.setByline(fr.getByline());
+            
+            b.setSummary(fr.getSummary());
+            b.setTitle(fr.getBook_title());
+            em.merge(b);
+            em.getTransaction().commit();
+            return fr;
+        }finally {
+            em.close();
+        }
+}
+public void deleteBookRev(int nr){
+        
+        EntityManager em = emf.createEntityManager();
+        BookReview b = em.find(BookReview.class, nr);
+
+        try{
+            em.getTransaction().begin();
+            em.remove(b);
+            em.getTransaction().commit();
+        }finally {
+            em.close();
+        }
+}
+public void getById(int nr){
+        
+        EntityManager em = emf.createEntityManager();
+        BookReview b = em.find(BookReview.class, nr);
+
+        try{
+            em.getTransaction().begin();
+            em.remove(b);
+            em.getTransaction().commit();
+        }finally {
+            em.close();
+        }
+}
+    public static void main(String[] args) {
+        BookFacade bf = new BookFacade();
+        bf.deleteBookRev(1);
+    }
 }

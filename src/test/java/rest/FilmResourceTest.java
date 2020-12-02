@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
 
-public class RenameMeResourceTest {
+public class FilmResourceTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
@@ -181,17 +181,18 @@ public class RenameMeResourceTest {
     
      @Test
     public void testPostReview() throws Exception {
-//          login("user","test");  
-//        given()
-//                .contentType("application/json")
-//                .body(new FilmDTO("display_title", "headline", "summary_short"))
-//                .when()
-//                .post("/film/add")
-//                .then()
-//                .body("display_title", equalTo("display_title"))
-//                .body("headline", equalTo("headline"))
-//                .body("summary_short", equalTo("summary_short"));
-//        
+          login("user","test");  
+            given()
+                .contentType("application/json")
+                .body(new FilmDTO("display_title", "headline", "summary_short"))
+                    .header("x-access-token", securityToken)
+                .when()
+                .post("/film/add")
+                .then()
+                .body("display_title", equalTo("display_title"))
+                .body("headline", equalTo("headline"))
+                .body("summary_short", equalTo("summary_short"));
+        
         
     }
 
