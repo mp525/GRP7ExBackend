@@ -74,6 +74,7 @@ public class FilmResourceTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
+        r2=new FilmReview (new FilmDTO("display_title", "headline", "summary_short"));
         try {
             em.getTransaction().begin();
             //Delete existing users and roles to get a "fresh" database
@@ -94,6 +95,7 @@ public class FilmResourceTest {
             em.persist(user);
             em.persist(admin);
             em.persist(both);
+            em.persist(r2);
             //System.out.println("Saved test data to database");
             em.getTransaction().commit();
         } finally {
@@ -196,6 +198,39 @@ public class FilmResourceTest {
         
     }
 
-                
-    }
+//         @Test
+//    public void testeditReview() throws Exception {
+//          login("admin","test");  
+//        FilmReview f3 = new FilmReview("bob","bent","børge");
+//        f3.setId(1);
+//            given()
+//                .contentType("application/json")
+//                .body(new FilmDTO(f3))
+//                    .header("x-access-token", securityToken)
+//                .when()
+//                .put("/film/edit")
+//                .then()
+//                    .statusCode(HttpStatus.OK_200.getStatusCode())
+//                .body("display_title", equalTo("bob"))
+//                .body("headline", equalTo("bent"))
+//                .body("summary_short", equalTo("børge"))
+//                    ;
+//        
+//        
+//    }
+//    @Test
+//    public void testdeleteReview() throws Exception {
+//          login("admin","test");  
+//            given()
+//                .contentType("application/json")
+//                    .header("x-access-token", securityToken)
+//                .when()
+//                .delete("/film/delete/1")
+//                .then()
+//                .statusCode(HttpStatus.OK_200.getStatusCode());
+//                
+//        
+//        
+//    }
+}
 
