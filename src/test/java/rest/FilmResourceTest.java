@@ -198,39 +198,39 @@ public class FilmResourceTest {
         
     }
 
-//         @Test
-//    public void testeditReview() throws Exception {
-//          login("admin","test");  
-//        FilmReview f3 = new FilmReview("bob","bent","børge");
-//        f3.setId(1);
-//            given()
-//                .contentType("application/json")
-//                .body(new FilmDTO(f3))
-//                    .header("x-access-token", securityToken)
-//                .when()
-//                .put("/film/edit")
-//                .then()
-//                    .statusCode(HttpStatus.OK_200.getStatusCode())
-//                .body("display_title", equalTo("bob"))
-//                .body("headline", equalTo("bent"))
-//                .body("summary_short", equalTo("børge"))
-//                    ;
-//        
-//        
-//    }
-//    @Test
-//    public void testdeleteReview() throws Exception {
-//          login("admin","test");  
-//            given()
-//                .contentType("application/json")
-//                    .header("x-access-token", securityToken)
-//                .when()
-//                .delete("/film/delete/1")
-//                .then()
-//                .statusCode(HttpStatus.OK_200.getStatusCode());
-//                
-//        
-//        
-//    }
+         @Test
+    public void testeditReview() throws Exception {
+          login("admin","test");  
+        FilmReview f3 = new FilmReview("bob","bent","børge");
+        f3.setId(r2.getId());
+            given()
+                .contentType("application/json")
+                .body(new FilmDTO(f3))
+                    .header("x-access-token", securityToken)
+                .when()
+                .put("/film/edit")
+                .then()
+                    .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("display_title", equalTo("bob"))
+                .body("headline", equalTo("bent"))
+                .body("summary_short", equalTo("børge"))
+                    ;
+        
+        
+    }
+    @Test
+    public void testdeleteReview() throws Exception {
+          login("admin","test");  
+            given()
+                .contentType("application/json")
+                    .header("x-access-token", securityToken)
+                .when()
+                .delete("/film/delete/"+r2.getId())
+                .then()
+                .statusCode(HttpStatus.OK_200.getStatusCode());
+                
+        
+        
+    }
 }
 
