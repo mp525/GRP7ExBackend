@@ -77,6 +77,15 @@ public class BooksResource {
         return GSON.toJson(dto);
     }
     
+    @Path("reviewsA/{title}")
+    @GET
+    @RolesAllowed("admin")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getReviewsA(@PathParam("title") String title) throws IOException, InterruptedException, ExecutionException {
+        ReviewsDTO dto = facade.fetchBookReviews(title);
+        return GSON.toJson(dto);
+    }
+    
     /**
      * PUT method for updating or creating an instance of BooksResource
      * @param content representation for the resource
