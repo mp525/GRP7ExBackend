@@ -56,7 +56,7 @@ public class FilmResource {
         @GET
     @Path("reviewU/{title}")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed("user")
+    @RolesAllowed("admin")
     public String getFilmReviewU(@PathParam("title") String title) throws IOException {
         List<FilmDTO> list = facade.getUserFilmRev(title);
         return GSON.toJson(list);
