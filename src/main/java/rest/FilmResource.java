@@ -53,7 +53,14 @@ public class FilmResource {
         List<FilmDTO> list = facade.fetchReviewByTitle(title);
         return GSON.toJson(list);
     }
-    
+        @GET
+    @Path("reviewU/{title}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("user")
+    public String getFilmReviewU(@PathParam("title") String title) throws IOException {
+        List<FilmDTO> list = facade.getUserFilmRev(title);
+        return GSON.toJson(list);
+    }
 //    Sending a FilmDTO results in that dtoo being converted to an entity and send to the DB
    @POST
     @Path("add")
