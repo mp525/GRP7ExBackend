@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import errorhandling.NotFoundException;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import security.errorhandling.AuthenticationException;
 import utils.EMF_Creator;
@@ -80,9 +84,28 @@ public class UserFacade {
         return user;
     }
     
-    public static void main(String[] args) {
+    public User deleteUser(String username) throws NotFoundException {
+        EntityManager em = emf.createEntityManager();
+        User user;
+        try {
+            user = em.find(User.class, username);
+            if (user == null) {
+                throw new NotFoundException("Username not found. Try again.");
+            } else {
+                em.getTransaction().begin();
+                em.remove(user);
+                em.getTransaction().commit();
+            }
+        } finally {
+            em.close();
+        }
+        return user;
+    }
+    
+    public static void main(String[] args) throws NotFoundException {
         UserFacade uf = new UserFacade();
-        uf.registerUser("hei", "hell");
+        uf.deleteUser("hei");
+        //uf.registerUser("hei", "hell");
         //instance.registerUser("fuck", "this");
     }
 
