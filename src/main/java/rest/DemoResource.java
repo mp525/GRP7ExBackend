@@ -43,12 +43,12 @@ import utils.EMF_Creator;
  */
 @Path("info")
 public class DemoResource {
-    
+
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     private final UserFacade Ufacade = UserFacade.getUserFacade(EMF);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final int TOKEN_EXPIRE_TIME = 1000 * 60 * 30; //30 min
-    
+
     @Context
     private UriInfo context;
 
@@ -61,7 +61,6 @@ public class DemoResource {
         return "{\"msg\":\"Hello anonymous\"}";
     }
 
-    
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("all")
@@ -88,19 +87,19 @@ public class DemoResource {
         String thisuser = securityContext.getUserPrincipal().getName();
         return "{\"msg\": \"Hello to (admin) User: " + thisuser + "\"}";
     }
-    
+
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("delete/{username}")
     @RolesAllowed("admin")
-    public String deleteUser(String username) throws NotFoundException {
+    public String deleteUser(@PathParam("username") String username) throws NotFoundException {
         User user = Ufacade.deleteUser(username);
         if (user != null) {
             return GSON.toJson(user);
         }
         throw new NotFoundException("Username not found. Try again.");
     }
-    
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -121,7 +120,7 @@ public class DemoResource {
         } finally {
             em.close();
         }
-        
+
         if (username.isEmpty() || password.isEmpty()) {
             //json = GSON.toJson("{\"msg\": \"Both boxes must be filled, try again.\"}");
             //return "{\"msg\": \"Both boxes must be filled, try again.\"}";
@@ -143,7 +142,7 @@ public class DemoResource {
                     throw (AuthenticationException) ex;
                 }
             }
-            
+
             if (user != null) {
                 //return "{\"msg\": \"User " + username + " registered\"}";
             }
@@ -152,30 +151,30 @@ public class DemoResource {
         //return "{\"msg\": \"Action could not be executed. Something went wrong.\"}";
         throw new AuthenticationException("Invalid username or password! Please try again");
     }
-    
+
     private String createToken(String userName, List<String> roles) throws JOSEException {
 
-    StringBuilder res = new StringBuilder();
-    for (String string : roles) {
-      res.append(string);
-      res.append(",");
+        StringBuilder res = new StringBuilder();
+        for (String string : roles) {
+            res.append(string);
+            res.append(",");
+        }
+        String rolesAsString = res.length() > 0 ? res.substring(0, res.length() - 1) : "";
+        String issuer = "semesterstartcode-dat3";
+
+        JWSSigner signer = new MACSigner(SharedSecret.getSharedKey());
+        Date date = new Date();
+        JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+                .subject(userName)
+                .claim("username", userName)
+                .claim("roles", rolesAsString)
+                .claim("issuer", issuer)
+                .issueTime(date)
+                .expirationTime(new Date(date.getTime() + TOKEN_EXPIRE_TIME))
+                .build();
+        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
+        signedJWT.sign(signer);
+        return signedJWT.serialize();
+
     }
-    String rolesAsString = res.length() > 0 ? res.substring(0, res.length() - 1) : "";
-    String issuer = "semesterstartcode-dat3";
-
-    JWSSigner signer = new MACSigner(SharedSecret.getSharedKey());
-    Date date = new Date();
-    JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-            .subject(userName)
-            .claim("username", userName)
-            .claim("roles", rolesAsString)
-            .claim("issuer", issuer)
-            .issueTime(date)
-            .expirationTime(new Date(date.getTime() + TOKEN_EXPIRE_TIME))
-            .build();
-    SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
-    signedJWT.sign(signer);
-    return signedJWT.serialize();
-
-  }
 }
