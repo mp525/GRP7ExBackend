@@ -101,14 +101,14 @@ public class BookFacadeTest {
         assertTrue(!dto.getBookDTOs().isEmpty());
     }
 
-    @Test
+    //@Test
     public void testFetchBookReviewsIsbn() throws IOException, InterruptedException, ExecutionException {
         String title = "Becoming";
         ReviewsDTO dto = facade.fetchBookReviews(title);
         assertTrue(dto.getIsbm().getIdentifier().length() > 0);
     }
 
-    @Test
+    //@Test
     public void testFetchBookReviewsWidget() throws IOException, InterruptedException, ExecutionException {
         String title = "Becoming";
         ReviewsDTO dto = facade.fetchBookReviews(title);
