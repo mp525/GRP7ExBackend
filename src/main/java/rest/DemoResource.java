@@ -61,20 +61,14 @@ public class DemoResource {
         return "{\"msg\":\"Hello anonymous\"}";
     }
 
-    //Just to verify if the database is setup
+    
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("all")
+    @RolesAllowed("admin")
     public String allUsers() {
-
-        EntityManager em = EMF.createEntityManager();
-        try {
-            TypedQuery<User> query = em.createQuery ("select u from User u",entities.User.class);
-            List<User> users = query.getResultList();
-            return "[" + users.size() + "]";
-        } finally {
-            em.close();
-        }
+        List<UserDTO> users = Ufacade.getAllUsers();
+        return GSON.toJson(users);
     }
 
     @GET
@@ -97,6 +91,7 @@ public class DemoResource {
     
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed("admin")
     public String deleteUser(String username) throws NotFoundException {
         User user = Ufacade.deleteUser(username);

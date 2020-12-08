@@ -1,5 +1,6 @@
 package dto;
 
+import entities.User;
 import java.util.Objects;
 
 /**
@@ -12,11 +13,18 @@ public class UserDTO {
 
     public UserDTO() {
     }
+    
+    public UserDTO(User user) {
+        this.username = user.getUserName();
+        this.password = user.getUserPass();
+    }
 
     public UserDTO(String username, String password) {
         this.username = username;
         this.password = password;
     }
+    
+    
 
     public String getUsername() {
         return username;

@@ -1,7 +1,12 @@
 package facades;
 
+import dto.UserDTO;
 import entities.Role;
 import entities.User;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import errorhandling.NotFoundException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -46,6 +51,21 @@ public class UserFacade {
             em.close();
         }
         return user;
+    }
+    
+    public List<UserDTO> getAllUsers(){
+        EntityManager em = emf.createEntityManager();
+        try {
+            TypedQuery<User> query = em.createQuery ("select u from User u",entities.User.class);
+            List<User> users = query.getResultList();
+            List<UserDTO> dtos = new ArrayList();
+            for (User user : users) {
+                dtos.add(new UserDTO(user));
+            }
+            return dtos;
+        } finally {
+            em.close();
+        }
     }
     
     public User registerUser(String username, String password) {
