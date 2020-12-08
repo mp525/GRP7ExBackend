@@ -91,6 +91,7 @@ public class DemoResource {
     
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed("admin")
     public String deleteUser(String username) throws NotFoundException {
         User user = Ufacade.deleteUser(username);
