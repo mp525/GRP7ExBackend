@@ -12,6 +12,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import dto.UserDTO;
 import entities.User;
+import errorhandling.NotFoundException;
 import facades.UserFacade;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +22,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
@@ -93,10 +95,21 @@ public class DemoResource {
         return "{\"msg\": \"Hello to (admin) User: " + thisuser + "\"}";
     }
     
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("admin")
+    public String deleteUser(String username) throws NotFoundException {
+        User user = Ufacade.deleteUser(username);
+        if (user != null) {
+            return GSON.toJson(user);
+        }
+        throw new NotFoundException("Username not found. Try again.");
+    }
+    
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registerUser(/*String username, String password*/ String givenUser) throws AuthenticationException, JOSEException {
+    public Response registerUser(String givenUser) throws AuthenticationException, JOSEException {
         UserDTO dto = GSON.fromJson(givenUser, UserDTO.class);
         String username = dto.getUsername();
         String password = dto.getPassword();
