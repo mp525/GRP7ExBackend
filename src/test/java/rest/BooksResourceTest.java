@@ -47,8 +47,7 @@ import utils.EMF_Creator;
  * @author Mathias
  */
 public class BooksResourceTest {
-    
-    
+
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
     //private BookDTO dto;
@@ -60,16 +59,14 @@ public class BooksResourceTest {
     private final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final BookFacade facade = new BookFacade();
 
-    
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
         return GrizzlyHttpServerFactory.createHttpServer(BASE_URI, rc);
     }
-    
-    
+
     @BeforeAll
     public static void setUpClass() {
-          //This method must be called before you request the EntityManagerFactory
+        //This method must be called before you request the EntityManagerFactory
         EMF_Creator.startREST_TestWithDB();
         emf = EMF_Creator.createEntityManagerFactoryForTest();
 
@@ -79,29 +76,29 @@ public class BooksResourceTest {
         RestAssured.port = SERVER_PORT;
         RestAssured.defaultParser = Parser.JSON;
     }
-    
+
     @AfterAll
     public static void tearDownClass() {
-         //Don't forget this, if you called its counterpart in @BeforeAll
+        //Don't forget this, if you called its counterpart in @BeforeAll
         EMF_Creator.endREST_TestWithDB();
-        
+
         httpServer.shutdownNow();
     }
-    
+
     @BeforeEach
     public void setUp() {
-         //BookDTO bookDTO = new BookDTO("RevAuthor","title","author","review");
-         EntityManager em = emf.createEntityManager();
+        //BookDTO bookDTO = new BookDTO("RevAuthor","title","author","review");
+        EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
             //Delete existing users and roles to get a "fresh" database
             em.createQuery("delete from User").executeUpdate();
             em.createQuery("delete from Role").executeUpdate();
             em.createQuery("delete from BookReview").executeUpdate();
-            
-            BookDTO bookDTO = new BookDTO("RevAuthor","title","author","review");
+
+            BookDTO bookDTO = new BookDTO("RevAuthor", "title", "author", "review");
             bookReview = new BookReview(bookDTO);
-            
+
             Role userRole = new Role("user");
             Role adminRole = new Role("admin");
             User user = new User("user", "test");
@@ -117,14 +114,13 @@ public class BooksResourceTest {
             em.persist(admin);
             em.persist(both);
             em.persist(bookReview);
-            //System.out.println("Saved test data to database");
             em.getTransaction().commit();
         } finally {
             em.close();
         }
     }
-    
-       //This is how we hold on to the token after login, similar to that a client must store the token somewhere
+
+    //This is how we hold on to the token after login, similar to that a client must store the token somewhere
     private static String securityToken;
 
     //Utility method to login and set the returned securityToken
@@ -137,18 +133,17 @@ public class BooksResourceTest {
                 .when().post("/login")
                 .then()
                 .extract().path("token");
-        //System.out.println("TOKEN ---> " + securityToken);
     }
 
     private void logOut() {
         securityToken = null;
     }
-    
+
     @Test
     public void serverIsRunning() {
         given().when().get("/info").then().statusCode(200);
     }
-    
+
     @Test
     public void testGetReviewsOld() {
         login("user", "test");
@@ -160,12 +155,10 @@ public class BooksResourceTest {
                 .statusCode(200)
                 .body("book_author", Matchers.contains("Michelle Obama"));
     }
-    
+
     @Test
     public void testGetReviewsBooks() {
-        //Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        //BookDTO json = gson.fromJson({"id"=0, "url"="https://www.nytimes.com/2018/12/06/books/review/michelle-obama-becoming-memoir.html", "publication_dt"="2018-12-06", "byline"="Isabel Wilkerson", "book_title"="Becoming", "book_author"="Michelle Obama", "summary"="The former first lady’s long-awaited new memoir recounts with insight, candor and wit her family’s trajectory from the Jim Crow South to Chicago’s South Side and her own improbable journey from there to the White House."}, BookDTO.class);
-        
+
         login("user", "test");
         given()
                 .contentType("application/json")
@@ -175,15 +168,12 @@ public class BooksResourceTest {
                 .then()
                 .statusCode(200)
                 .body(Matchers.containsString("Becoming"));
-                //Hvorfor er dette det tætteste jeg kan komme på at teste bookDTOs?!
-//                        "bookDTOs", hasItem(
-//                Matchers.<BookDTO>hasProperty("book_title", is("Becoming"))));
-        
+        //Hvorfor er dette det tætteste jeg kan komme på at teste bookDTOs?!        
     }
-    
+
 //    @Test
     public void testGetReviewsBooksAdmin() {
-        
+
         login("admin", "test");
         given()
                 .contentType("application/json")
@@ -195,12 +185,12 @@ public class BooksResourceTest {
                 .body(Matchers.containsString("Becoming"));
 
     }
-    
+
     @Test
     public void testEditReviews() {
         BookDTO dto = new BookDTO(bookReview);
         dto.setSummary("edited review");
-        
+
         login("admin", "test");
         given()
                 .contentType("application/json")
@@ -213,9 +203,9 @@ public class BooksResourceTest {
                 .body("summary", equalTo("edited review"));
 
     }
-    
-     @Test
-    public void testDeleteReviews() {      
+
+    @Test
+    public void testDeleteReviews() {
         login("admin", "test");
         given()
                 .pathParam("id", bookReview.getId())
@@ -231,13 +221,13 @@ public class BooksResourceTest {
                 .body("summary", equalTo("deleted"));
 
     }
-   
-@Test
+
+    @Test
     public void testPostReview() throws Exception {
-          login("user","test");  
+        login("user", "test");
         given()
                 .contentType("application/json")
-                .body(new BookDTO("byline","book_title","book_author","summary"))
+                .body(new BookDTO("byline", "book_title", "book_author", "summary"))
                 .header("x-access-token", securityToken)
                 .when()
                 .post("/books/add")
@@ -246,8 +236,7 @@ public class BooksResourceTest {
                 .body("book_author", equalTo("book_author"))
                 .body("byline", equalTo("byline"))
                 .body("summary", equalTo("summary"));
-        
-        
+
     }
-   
+
 }

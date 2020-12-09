@@ -52,22 +52,24 @@ public class UserFacade {
         }
         return user;
     }
-    
-    public List<UserDTO> getAllUsers(){
+
+    public List<UserDTO> getAllUsers() {
         EntityManager em = emf.createEntityManager();
         try {
-            TypedQuery<User> query = em.createQuery ("select u from User u",entities.User.class);
+            TypedQuery<User> query = em.createQuery("select u from User u", entities.User.class);
             List<User> users = query.getResultList();
             List<UserDTO> dtos = new ArrayList();
+
             for (User user : users) {
                 dtos.add(new UserDTO(user));
             }
+
             return dtos;
         } finally {
             em.close();
         }
     }
-    
+
     public User registerUser(String username, String password) {
         EntityManager em = emf.createEntityManager();
         User user;
@@ -83,7 +85,7 @@ public class UserFacade {
         }
         return user;
     }
-    
+
     public User deleteUser(String username) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         User user;
@@ -101,12 +103,4 @@ public class UserFacade {
         }
         return user;
     }
-    
-    public static void main(String[] args) throws NotFoundException {
-        UserFacade uf = new UserFacade();
-        uf.deleteUser("hei");
-        //uf.registerUser("hei", "hell");
-        //instance.registerUser("fuck", "this");
-    }
-
 }

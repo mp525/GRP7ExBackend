@@ -20,7 +20,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
- 
+
 /**
  * REST Web Service
  *
@@ -28,23 +28,23 @@ import javax.ws.rs.PathParam;
  */
 @Path("film")
 public class FilmResource {
+
     private final FilmFacade facade = new FilmFacade();
     private final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @Context
     private UriInfo context;
-    
+
     public FilmResource() {
     }
 
-   
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getDefault() throws IOException, InterruptedException, ExecutionException {
-        List<String> list = facade.fetchParallel();
-        return GSON.toJson(list);
+//        List<String> list = facade.fetchParallel();
+        return "default";
     }
-    
+
     @GET
     @Path("review/{title}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -53,7 +53,8 @@ public class FilmResource {
         List<FilmDTO> list = facade.fetchReviewByTitle(title);
         return GSON.toJson(list);
     }
-        @GET
+
+    @GET
     @Path("reviewU/{title}")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("admin")
@@ -62,35 +63,38 @@ public class FilmResource {
         return GSON.toJson(list);
     }
 //    Sending a FilmDTO results in that dtoo being converted to an entity and send to the DB
-   @POST
+
+    @POST
     @Path("add")
     @RolesAllowed("user")
     @Produces(MediaType.APPLICATION_JSON)
     public FilmDTO addFilmReview(String filmReview) throws IOException {
-        FilmDTO fr = GSON.fromJson(filmReview, FilmDTO.class);        
+        FilmDTO fr = GSON.fromJson(filmReview, FilmDTO.class);
         facade.writeFilmRev(fr);
         return fr;
-       
+
     }
 //    Edit film using a FilmDTO with an id
+
     @PUT
     @Path("edit")
     @RolesAllowed("admin")
     @Produces(MediaType.APPLICATION_JSON)
     public FilmDTO editFilmReview(String filmrev) throws IOException {
-        FilmDTO fr = GSON.fromJson(filmrev, FilmDTO.class);        
+        FilmDTO fr = GSON.fromJson(filmrev, FilmDTO.class);
         facade.editFilmRev(fr);
         return fr;
-       
+
     }
+
     //Sending an id to this endpoint results in the filmreview in the db with that id being deleted
     @DELETE
     @Path("delete/{id}")
     @RolesAllowed("admin")
     @Produces(MediaType.APPLICATION_JSON)
-    public FilmDTO deleteFilmReview(@PathParam("id")int id) throws IOException {                
+    public FilmDTO deleteFilmReview(@PathParam("id") int id) throws IOException {
         facade.deleteFilmRev(id);
-        return new FilmDTO("has","been","deleted");
-       
+        return new FilmDTO("has", "been", "deleted");
+
     }
 }

@@ -131,12 +131,8 @@ public class DemoResource {
             User user = Ufacade.registerUser(username, password);
             //json = GSON.toJson("{\"msg\": \"User " + username + " registered\"}");
             try {
-                User verifiedUser = Ufacade.getVeryfiedUser(username, password);
-                String token = createToken(username, verifiedUser.getRolesAsStrings());
-                JsonObject responseJson = new JsonObject();
-                responseJson.addProperty("username", username);
-                responseJson.addProperty("token", token);
-                return Response.ok(new Gson().toJson(responseJson)).build();
+                return quickLogin(username, password);
+
             } catch (JOSEException | AuthenticationException ex) {
                 if (ex instanceof AuthenticationException) {
                     throw (AuthenticationException) ex;
@@ -150,6 +146,15 @@ public class DemoResource {
         //json = GSON.toJson("{\"msg\": \"Action could not be executed. Something went wrong.\"}");
         //return "{\"msg\": \"Action could not be executed. Something went wrong.\"}";
         throw new AuthenticationException("Invalid username or password! Please try again");
+    }
+
+    private Response quickLogin(String username, String password) throws AuthenticationException, JOSEException {
+        User verifiedUser = Ufacade.getVeryfiedUser(username, password);
+        String token = createToken(username, verifiedUser.getRolesAsStrings());
+        JsonObject responseJson = new JsonObject();
+        responseJson.addProperty("username", username);
+        responseJson.addProperty("token", token);
+        return Response.ok(new Gson().toJson(responseJson)).build();
     }
 
     private String createToken(String userName, List<String> roles) throws JOSEException {

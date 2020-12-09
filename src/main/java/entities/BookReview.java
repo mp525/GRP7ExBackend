@@ -23,6 +23,7 @@ import javax.persistence.TemporalType;
 @Entity
 @NamedQuery(name = "BookReview.deleteAllRows", query = "DELETE from BookReview")
 public class BookReview {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -43,20 +44,23 @@ public class BookReview {
         this.author = author;
         this.summary = summary;
     }
-    public BookReview(int id,String byline, String title, String author, String summary) {
+
+    public BookReview(int id, String byline, String title, String author, String summary) {
         this.publication = new Date();
         this.byline = byline;
         this.title = title;
         this.author = author;
         this.summary = summary;
     }
-public BookReview(BookDTO d) {
+
+    public BookReview(BookDTO d) {
         this.publication = new Date();
         this.byline = d.getByline();
         this.title = d.getBook_title();
         this.author = d.getBook_author();
         this.summary = d.getSummary();
     }
+
     public Date getPublication() {
         return publication;
     }
@@ -150,5 +154,5 @@ public BookReview(BookDTO d) {
     public String toString() {
         return "BookReview{" + "publication=" + publication + ", byline=" + byline + ", title=" + title + ", author=" + author + ", summary=" + summary + '}';
     }
-    
+
 }

@@ -56,7 +56,7 @@ public class BooksResource {
     @Produces(MediaType.APPLICATION_JSON)
     public String getJson() {
         //TODO return proper representation object
-        throw new UnsupportedOperationException();
+        return "books api reached!";
     }
     
     @Path("reviewsOld/{title}")

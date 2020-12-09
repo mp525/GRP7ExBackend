@@ -13,6 +13,7 @@ import java.util.Date;
  * @author Mathias
  */
 public class BookDTO {
+
     private int id;
     private String url;
     private String publication_dt;
@@ -29,7 +30,8 @@ public class BookDTO {
         this.book_author = book_author;
         this.summary = summary;
     }
-    public BookDTO( String byline, String book_title, String book_author, String summary) {
+
+    public BookDTO(String byline, String book_title, String book_author, String summary) {
         this.url = "none";
         this.publication_dt = new Date().toString();
         this.byline = byline;
@@ -37,8 +39,9 @@ public class BookDTO {
         this.book_author = book_author;
         this.summary = summary;
     }
-     public BookDTO(BookReview review) {
-        this.id=review.getId();
+
+    public BookDTO(BookReview review) {
+        this.id = review.getId();
         this.url = "none";
         this.publication_dt = review.getPublication().toString();
         this.byline = review.getByline();
@@ -107,8 +110,5 @@ public class BookDTO {
     public String toString() {
         return "BookDTO{" + "url=" + url + ", publication_dt=" + publication_dt + ", byline=" + byline + ", book_title=" + book_title + ", book_author=" + book_author + ", summary=" + summary + '}';
     }
-    
-    
-    
-    
+
 }

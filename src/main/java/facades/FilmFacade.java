@@ -50,39 +50,23 @@ public class FilmFacade {
         }
     }
 
-    public List<String> fetchParallel() throws InterruptedException, ExecutionException {
-        String[] hostList = {"https://api.chucknorris.io/jokes/random", "https://icanhazdadjoke.com",
-            "https://swapi.dev/api/planets/schema", "https://swapi.dev/api/vehicles/schema", "https://swapi.dev/api/species/schema"};
-        ExecutorService executor = Executors.newCachedThreadPool();
-        List<Future<String>> futures = new ArrayList<>();
-        List<String> retList = new ArrayList();
-
-        for (String url : hostList) {
-            Callable<String> urlTask = new Default(url);
-            Future future = executor.submit(urlTask);
-            futures.add(future);
-        }
-
-        for (Future<String> fut : futures) {
-            retList.add(fut.get());
-        }
-
-        return retList;
-    }
-
     public List<FilmDTO> fetchReviewByTitle(String title) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         List<FilmDTO> films = new ArrayList();
         String url = "https://api.nytimes.com/svc/movies/v2/reviews/search.json?api-key=5tN35qLGRRkvgYSCFj7wKdwhDNb5PMOF" + "&query=" + title;
         String fetch = HttpUtils.fetchData(url);
+
         RawFilmDTO film = gson.fromJson(fetch, RawFilmDTO.class);
         List<FilmDTO> userReviews = getUserFilmRev(title);
+
         for (FilmDTO f : film.getResults()) {
             films.add(f);
         }
+
         for (FilmDTO f : userReviews) {
             films.add(f);
         }
+
         return films;
     }
 
@@ -104,12 +88,9 @@ public class FilmFacade {
 
     public FilmDTO writeFilmRev(FilmDTO fr) {
         FilmReview fr1 = new FilmReview(fr);
-        System.out.println(fr1.toString());
-        System.out.println(fr.toString());
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
-            System.out.println(fr1);
             em.persist(fr1);
             em.getTransaction().commit();
             return new FilmDTO(fr1);
@@ -146,14 +127,4 @@ public class FilmFacade {
             em.close();
         }
     }
-
-    public static void main(String[] args) throws IOException {
-
-        FilmFacade facade = new FilmFacade();
-        FilmDTO fr = new FilmDTO("Harry Potter", "OMG ITS GREAT", " it was so great holy shit idk what to say");
-        System.out.println(facade.fetchReviewByTitle("harry potter"));
-        System.out.println(facade.fetchReviewByTitle("lebowski"));
-        System.out.println(facade.getUserFilmRev("Harry Potter"));
-    }
-
 }

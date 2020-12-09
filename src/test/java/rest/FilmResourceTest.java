@@ -74,7 +74,7 @@ public class FilmResourceTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
-        r2=new FilmReview (new FilmDTO("display_title", "headline", "summary_short"));
+        r2 = new FilmReview(new FilmDTO("display_title", "headline", "summary_short"));
         try {
             em.getTransaction().begin();
             //Delete existing users and roles to get a "fresh" database
@@ -101,23 +101,12 @@ public class FilmResourceTest {
         } finally {
             em.close();
         }
-        /*EntityManager em = emf.createEntityManager();
-        r1 = new RenameMe("Some txt", "More text");
-        r2 = new RenameMe("aaa", "bbb");
-        try {
-            em.getTransaction().begin();
-            em.createNamedQuery("RenameMe.deleteAllRows").executeUpdate();
-            em.persist(r1);
-            em.persist(r2);
-            em.getTransaction().commit();
-        } finally {
-            em.close();
-        }*/
+
     }
-    
+
     //This is how we hold on to the token after login, similar to that a client must store the token somewhere
     private static String securityToken;
-    
+
     //Utility method to login and set the returned securityToken
     private static void login(String role, String password) {
         String json = String.format("{username: \"%s\", password: \"%s\"}", role, password);
@@ -128,28 +117,16 @@ public class FilmResourceTest {
                 .when().post("/login")
                 .then()
                 .extract().path("token");
-        //System.out.println("TOKEN ---> " + securityToken);
     }
 
     @Test
     public void testServerIsUp() {
-        given().when().get("/xxx").then().statusCode(200);
+        given().when().get("/film").then().statusCode(200);
     }
 
-    //This test assumes the database contains two rows
-    @Test
-    public void testDummyMsg() throws Exception {
-        given()
-                .contentType("application/json")
-                .get("/xxx/").then()
-                .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("msg", equalTo("Hello World"));
-    }
-    
     @Test
     public void testGetFilmReview() throws Exception {
-        login("user","test");
+        login("user", "test");
         String[] arr = {"Big Lebowski, the (Movie)"};
         given()
                 .contentType("application/json")
@@ -160,10 +137,10 @@ public class FilmResourceTest {
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("headline", contains(arr));
     }
-    
+
     @Test
     public void testGetFilmReviews() throws Exception {
-        login("user","test");
+        login("user", "test");
         List<FilmDTO> list;
         list = given()
                 .contentType("application/json")
@@ -178,59 +155,54 @@ public class FilmResourceTest {
         FilmDTO f5 = list.get(4);
         FilmDTO f6 = list.get(5);
         FilmDTO f7 = list.get(6);
-        assertThat(list, contains(f1, f2, f3,f4,f5,f6,f7));
+        assertThat(list, contains(f1, f2, f3, f4, f5, f6, f7));
     }
-    
-     @Test
+
+    @Test
     public void testPostReview() throws Exception {
-          login("user","test");  
-            given()
+        login("user", "test");
+        given()
                 .contentType("application/json")
                 .body(new FilmDTO("display_title", "headline", "summary_short"))
-                    .header("x-access-token", securityToken)
+                .header("x-access-token", securityToken)
                 .when()
                 .post("/film/add")
                 .then()
                 .body("display_title", equalTo("display_title"))
                 .body("headline", equalTo("headline"))
                 .body("summary_short", equalTo("summary_short"));
-        
-        
+
     }
 
-         @Test
+    @Test
     public void testeditReview() throws Exception {
-          login("admin","test");  
-        FilmReview f3 = new FilmReview("bob","bent","børge");
+        login("admin", "test");
+        FilmReview f3 = new FilmReview("bob", "bent", "børge");
         f3.setId(r2.getId());
-            given()
+        given()
                 .contentType("application/json")
                 .body(new FilmDTO(f3))
-                    .header("x-access-token", securityToken)
+                .header("x-access-token", securityToken)
                 .when()
                 .put("/film/edit")
                 .then()
-                    .statusCode(HttpStatus.OK_200.getStatusCode())
+                .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("display_title", equalTo("bob"))
                 .body("headline", equalTo("bent"))
-                .body("summary_short", equalTo("børge"))
-                    ;
-        
-        
+                .body("summary_short", equalTo("børge"));
+
     }
+
     @Test
     public void testdeleteReview() throws Exception {
-          login("admin","test");  
-            given()
+        login("admin", "test");
+        given()
                 .contentType("application/json")
-                    .header("x-access-token", securityToken)
+                .header("x-access-token", securityToken)
                 .when()
-                .delete("/film/delete/"+r2.getId())
+                .delete("/film/delete/" + r2.getId())
                 .then()
                 .statusCode(HttpStatus.OK_200.getStatusCode());
-                
-        
-        
+
     }
 }
-
